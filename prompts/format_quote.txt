@@ -1,0 +1,21 @@
+FORMAT: QUOTE POST
+
+Produce a QuotePost object with these fields:
+
+- quote_text: 15-25 words. Original wisdom in the brand voice — a single,
+  quietly memorable line that could stand alone on an image. It should feel
+  earned and true, not slogan-like. No quotation marks inside it. It is
+  ORIGINAL to Calm Money Daily, never attributed to a historical figure.
+- attribution: exactly "— Calm Money Daily".
+- image_background_template: choose the template that best fits the tone of the
+  quote, from: warm_gradient, parchment, minimal_photo, branded_solid,
+  serif_card.
+- caption_body: 200-400 words. A reflective expansion of the quote. Open with a
+  concrete scene or observation, develop the idea, fold in one paraphrased
+  Stoic thought (in your own words, no fabricated quotation), and land on a
+  calm, non-prescriptive note. At least one concrete number, example, or scene.
+- closing_question: one specific question a reader could answer with a real
+  personal story. Not "what do you think?".
+
+Match the cadence of the examples: varied sentence length, occasional
+one-sentence paragraph, no hype.

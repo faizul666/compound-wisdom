@@ -1,0 +1,18 @@
+[
+  {
+    "well_id": "wealth_psychology",
+    "angle_title": "Why checking your investment account daily makes returns feel worse than they actually are",
+    "angle_summary": "Behavioral research consistently shows that frequent portfolio checking creates anxiety without improving outcomes — a phenomenon called myopic loss aversion. The Stoic framing is the control dichotomy: we can control the decision to contribute, we can't control daily price movement, and watching the second one closely makes the first one harder to keep.",
+    "supporting_facts": [
+      {
+        "fact": "Behavioral economist Shlomo Benartzi's research on myopic loss aversion found that investors who check accounts more frequently perceive risk as higher and tend to allocate less to equities, reducing long-term returns.",
+        "source_url": "https://www.anderson.ucla.edu/faculty-and-research/anderson-review/myopic-loss-aversion",
+        "source_name": "UCLA Anderson Review"
+      }
+    ],
+    "suggested_format": "mini_blog",
+    "suggested_list_count": null,
+    "evergreen": true,
+    "voice_compatibility_notes": "Anchor in the Stoic control dichotomy. Use 'equities' or 'investments' generically — never name asset classes or funds."
+  }
+]

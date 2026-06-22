@@ -1,0 +1,23 @@
+FORMAT: LIST POST
+
+Produce a ListPost object with these fields:
+
+- title: a specific, calm title naming what the list delivers. It is the only
+  text on the image. "10 quiet money habits that compound over a lifetime"
+  beats "10 money tips". The leading number in the title MUST equal count.
+- count: exactly 5 or 10. Match the suggested_list_count from the brief when
+  one is given.
+- list_image_template: choose from numbered_bold, serif_list_card,
+  warm_gradient_list, minimal_dark.
+- intro_line: one or two sentences setting up the list with a calm framing.
+- items: exactly `count` ListItem objects. Each has:
+    - name: the habit/idea/mistake as a short phrase (not a full sentence).
+    - explanation: 1-2 sentences. Concrete and specific — a number, an example,
+      or a vivid distinction. Never prescriptive about specific products.
+  Items should not overlap; each earns its place. Order them so the list reads
+  with a gentle rhythm, not random.
+- closing_line: one calm sentence that ties the list together — often a small
+  reframe, never a call to action or a promise.
+
+Keep every item on-brand: educational, anti-comparison, patient. No urgency, no
+"do this now," no specific assets or tickers.

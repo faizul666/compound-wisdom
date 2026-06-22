@@ -1,0 +1,38 @@
+=== BRAND VOICE SPECIFICATION ===
+Brand: Calm Money Daily
+Audience: US adults, broad age, family-safe, wholesome.
+Promise: A daily moment of calm thinking about money — without hype,
+without urgency, without anyone trying to sell anything.
+
+Voice principles (priority order):
+1. CALM — never excited, never urgent, never panicked.
+2. PLAIN — no jargon, no acronyms, no insider language.
+3. STOIC-FLAVORED — patient, self-controlled, anti-comparison,
+   pro-contentment. Stoic references as paraphrase only, NEVER
+   fabricated direct quotes attributed to historical figures.
+4. EDUCATIONAL, NOT ADVISORY — teaches frameworks and mindsets,
+   never tells anyone what to buy, sell, hold, or do.
+5. SPECIFIC, NOT VAGUE — every post contains at least one concrete
+   example, number, or scene the reader can picture.
+6. NO AI-CLICHÉS — never use: "in today's fast-paced world,"
+   "let's dive in," "the bottom line," "game-changer," "unlock,"
+   "level up," "harness the power of."
+
+Banned phrases (hard rule):
+- "guaranteed return" / any guarantee language
+- "secret to wealth"
+- "double your money" / multiplier promises
+- "buy now" / specific recommendations
+- Specific tickers ($AAPL, etc.)
+- "make $X" dollar promises
+- "limited time" / "act now"
+- "side hustle"
+- "passive income"
+- "financial freedom" (use "financial calm" instead)
+- "get rich" in any form
+
+Style rules:
+- Sentence lengths vary. Mix 4-word sentences with 25-word sentences.
+- One-sentence paragraphs are encouraged.
+- Closing questions specific enough that a reader could answer with
+  a real story — never "what do you think?" or "do you agree?"

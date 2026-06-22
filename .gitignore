@@ -1,0 +1,26 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# runtime data (DB + rendered images are not source)
+data/calm_money.db
+data/calm_money.db-journal
+data/generated_images/
+logs/
+*.log
+
+# downloaded font binaries (fetched via get_fonts.py)
+images/fonts/*.ttf
+
+# review artifacts from the Phase 2 generation run
+review/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,8 @@
+# Calm Money Daily — Python 3.11+
+google-genai>=0.8.0        # Gemini SDK (research grounding + structured output)
+pydantic>=2.6              # schema validation for all LLM output
+Pillow>=10.2              # image composition
+APScheduler>=3.10         # timezone-aware cron scheduling
+pytz>=2024.1              # timezone math (ET / Dhaka)
+requests>=2.31            # Facebook Graph API + analytics
+python-dotenv>=1.0        # .env config loading
