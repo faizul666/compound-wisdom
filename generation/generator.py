@@ -164,6 +164,8 @@ def _parse_response(resp, schema: Type[BaseModel], format_type: str) -> PostPayl
 def _post_validate(format_type: str, payload: PostPayload, brief: ResearchBrief) -> None:
     """Structural checks the JSON schema can't express."""
     if isinstance(payload, ListPost):
+        if payload.count not in (5, 10):
+            raise GenerationError(f"list: count={payload.count} must be 5 or 10")
         if len(payload.items) != payload.count:
             raise GenerationError(
                 f"list: count={payload.count} but {len(payload.items)} items returned"

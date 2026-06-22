@@ -47,7 +47,10 @@ class ListItem(BaseModel):
 
 class ListPost(BaseModel):
     title: str
-    count: Literal[5, 10]
+    # Plain int, not Literal[5, 10]: Gemini's response_schema only supports
+    # string enums, so an int Literal breaks schema construction. The
+    # "exactly 5 or 10" rule is enforced in the generator's _post_validate.
+    count: int = Field(description="exactly 5 or 10")
     list_image_template: ListTemplate
     intro_line: str
     items: list[ListItem]
