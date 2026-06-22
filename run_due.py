@@ -66,8 +66,18 @@ def main() -> int:
         _print_status()
         return 0
 
+    # Single-instance lock: prevents a scheduled run and a manual run_now from
+    # publishing the same slot simultaneously (a duplicate post).
+    from lock import single_instance
+    with single_instance("post") as acquired:
+        if not acquired:
+            log.info("another posting run is in progress; skipping to avoid a duplicate post.")
+            return 0
+        return _run_posting(args, log)
+
+
+def _run_posting(args, log) -> int:
     import pipeline
-    import store
 
     # --slot: force a single format immediately, keyed to its slot time today.
     if args.slot:

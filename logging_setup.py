@@ -43,4 +43,8 @@ def setup(level: int = logging.INFO) -> None:
     for h in (file_handler, stream_handler, tg_handler):
         root.addHandler(h)
 
+    # Quiet noisy third-party loggers so the log shows our own messages clearly.
+    for noisy in ("httpx", "httpcore", "google_genai", "urllib3", "PIL"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+
     _configured = True
