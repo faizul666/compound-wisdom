@@ -53,8 +53,10 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Publish the posting slot that is due now.")
     ap.add_argument("--slot", choices=config.FORMAT_TYPES, help="Force this format now, ignoring timing.")
     ap.add_argument("--force", action="store_true", help="Treat the nearest slot as due now.")
-    ap.add_argument("--catchup-hours", type=float, default=4.0,
-                    help="Max hours a slot can be late and still post (default 4).")
+    ap.add_argument("--catchup-hours", type=float, default=24.0,
+                    help="Max hours a slot can be late and still recover (default 24 = same day).")
+    ap.add_argument("--all", action="store_true",
+                    help="Post ALL due-unposted slots this run, instead of one (oldest) per run.")
     ap.add_argument("--list", action="store_true", help="Show today's slots and exit.")
     args = ap.parse_args()
 
@@ -78,6 +80,7 @@ def main() -> int:
 
 def _run_posting(args, log) -> int:
     import pipeline
+    import store
 
     # --slot: force a single format immediately, keyed to its slot time today.
     if args.slot:
@@ -94,19 +97,32 @@ def _run_posting(args, log) -> int:
     now_utc = datetime.now(pytz.utc)
     window = timedelta(hours=args.catchup_hours)
 
+    # Collect today's slots that are due (time has arrived, within the catch-up
+    # window) and not yet posted.
     due = []
     for fmt, local, sched_iso in _todays_slots():
         sched_utc = datetime.fromisoformat(sched_iso)
-        if args.force or (sched_utc <= now_utc <= sched_utc + window):
-            due.append((fmt, sched_iso, local))
+        in_window = args.force or (sched_utc <= now_utc <= sched_utc + window)
+        if in_window and not store.slot_already_posted(sched_iso):
+            due.append((sched_utc, fmt, sched_iso, local))
 
     if not due:
-        log.info("no slots due right now. Use --list to see today's schedule.")
+        log.info("no due-and-unposted slots right now. Use --list to see today's schedule.")
         return 0
 
+    due.sort(key=lambda x: x[0])  # oldest first
+
+    # Default: post only the OLDEST due slot, one per run. With an hourly
+    # catch-up trigger this recovers N missed slots one-per-hour (spaced out).
+    # --all posts everything due in a single run (manual full catch-up).
+    to_post = due if args.all else due[:1]
+    if not args.all and len(due) > 1:
+        log.info("%d slots due; posting the oldest (%s) this run, %d will follow on later runs.",
+                 len(due), to_post[0][1], len(due) - 1)
+
     exit_code = 0
-    for fmt, sched_iso, local in due:
-        log.info("running due slot: %s (scheduled %s ET)", fmt, local.strftime("%I:%M %p"))
+    for sched_utc, fmt, sched_iso, local in to_post:
+        log.info("running slot: %s (scheduled %s ET)", fmt, local.strftime("%I:%M %p"))
         res = pipeline.run_slot(fmt, sched_iso)
         if res.status == "failed":
             log.error("slot %s failed: %s", fmt, res.detail)
