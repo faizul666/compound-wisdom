@@ -20,7 +20,7 @@ from pydantic import ValidationError
 
 import config
 import store
-from schemas import ResearchBrief, ResearchBriefBatch
+from schemas import ResearchBrief
 
 log = logging.getLogger("calm_money.research")
 
@@ -34,7 +34,12 @@ def _read_prompt(name: str) -> str:
     return (config.PROMPTS_DIR / name).read_text(encoding="utf-8").strip()
 
 
+@lru_cache(maxsize=1)
 def _client():
+    # Cached so the Client object stays referenced for the life of the process.
+    # An uncached `_client().models.generate_content(...)` lets the temporary
+    # Client get garbage-collected mid-request, which closes its transport and
+    # raises "Cannot send a request, as the client has been closed."
     config.require("GEMINI_API_KEY")
     from google import genai
     return genai.Client(api_key=config.GEMINI_API_KEY)
@@ -50,7 +55,14 @@ def _build_prompt(n: int, avoid_titles: list[str]) -> str:
         "Recently used angle titles to AVOID duplicating (do not repeat or "
         "near-duplicate any of these):",
         avoid,
-        f"Produce {n} new, distinct briefs spread across multiple wells. "
+        f"Produce {n} new, distinct briefs spread across multiple wells.\n"
+        f"well_id MUST be EXACTLY one of: {', '.join(config.WELL_IDS)} "
+        "(do not invent new well ids).\n"
+        "suggested_format MUST be EXACTLY one of: quote, mini_blog, list.\n"
+        "suggested_list_count is 5 or 10 only when suggested_format is list, else null.\n"
+        "FORMAT MIX: the page posts 2 lists, 1 quote, and 1 mini_blog per day, so "
+        "weight this batch toward lists — at least half the briefs must be "
+        "suggested_format='list', with the rest split between quote and mini_blog.\n"
         'Return ONLY the JSON object: {"briefs": [ ... ]}.',
     ])
 
@@ -118,15 +130,28 @@ def generate_briefs(n: int | None = None) -> list[ResearchBrief]:
             raise
 
     data = _extract_json(text)
-    try:
-        batch = ResearchBriefBatch.model_validate(data)
-    except ValidationError as e:
-        raise ResearchError(f"research output failed schema validation: {e}") from e
+    raw_briefs = data.get("briefs", []) if isinstance(data, dict) else []
+    if not raw_briefs:
+        raise ResearchError("research output had no 'briefs' array")
+
+    # Validate each brief independently — keep the good ones, drop malformed
+    # ones (e.g. an invented well_id) rather than failing the whole batch.
+    validated: list[ResearchBrief] = []
+    dropped = 0
+    for rb in raw_briefs:
+        try:
+            validated.append(ResearchBrief.model_validate(rb))
+        except ValidationError:
+            dropped += 1
+    if dropped:
+        log.warning("dropped %d malformed brief(s) from research output", dropped)
+    if not validated:
+        raise ResearchError("no valid briefs in research output")
 
     # de-dup against recent titles (case-insensitive) and within the batch
     seen = {t.strip().lower() for t in avoid}
     unique: list[ResearchBrief] = []
-    for b in batch.briefs:
+    for b in validated:
         key = b.angle_title.strip().lower()
         if key in seen:
             continue
