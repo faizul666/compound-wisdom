@@ -14,6 +14,7 @@ to handle GenerationError.
 from __future__ import annotations
 
 import json
+import time
 from functools import lru_cache
 from typing import Type, Union
 
@@ -27,6 +28,23 @@ PostPayload = Union[QuotePost, MiniBlogPost, ListPost]
 
 class GenerationError(RuntimeError):
     """Raised when generation fails or returns content that won't validate."""
+
+
+class TransientError(GenerationError):
+    """A retryable failure (API 503/429, network blip). The caller should NOT
+    consume the brief — the same brief can be retried on the next run."""
+
+
+GENERATION_RETRIES = 3
+_TRANSIENT_MARKERS = (
+    "503", "unavailable", "429", "resource_exhausted", "getaddrinfo",
+    "timed out", "timeout", "deadline", "connection", "temporarily", "overloaded",
+)
+
+
+def _is_transient(msg: str) -> bool:
+    m = msg.lower()
+    return any(k in m for k in _TRANSIENT_MARKERS)
 
 
 # --------------------------------------------------------------------------
@@ -123,14 +141,24 @@ def generate(brief: ResearchBrief, *, allow_fallback: bool = False) -> tuple[str
         response_schema=schema,
     )
 
-    try:
-        resp = _client().models.generate_content(
-            model=_model_for(format_type),
-            contents=_user_content(format_type, brief),
-            config=cfg,
-        )
-    except Exception as e:  # network, quota, API errors
-        raise GenerationError(f"Gemini call failed for {format_type}: {e}") from e
+    resp = None
+    for attempt in range(1, GENERATION_RETRIES + 1):
+        try:
+            resp = _client().models.generate_content(
+                model=_model_for(format_type),
+                contents=_user_content(format_type, brief),
+                config=cfg,
+            )
+            break
+        except Exception as e:  # network, quota, API errors
+            if _is_transient(str(e)):
+                if attempt < GENERATION_RETRIES:
+                    time.sleep(2 ** attempt)  # 2s, 4s backoff
+                    continue
+                raise TransientError(
+                    f"transient API error for {format_type} after {attempt} attempts: {e}"
+                ) from e
+            raise GenerationError(f"Gemini call failed for {format_type}: {e}") from e
 
     payload = _parse_response(resp, schema, format_type)
     _post_validate(format_type, payload, brief)

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from functools import lru_cache
 from typing import Union
 
@@ -100,6 +101,8 @@ def judge(payload: PostPayload) -> ComplianceResult:
     """Run the deterministic LLM judge. Raises on API/parse failure."""
     from google.genai import types
 
+    from generation.generator import GENERATION_RETRIES, _is_transient
+
     post_json = json.dumps(payload.model_dump(), ensure_ascii=False, indent=2)
     cfg = types.GenerateContentConfig(
         system_instruction=_judge_system_instruction(),
@@ -107,11 +110,20 @@ def judge(payload: PostPayload) -> ComplianceResult:
         max_output_tokens=1024,
         response_mime_type="application/json",
     )
-    resp = _client().models.generate_content(
-        model=config.MODEL_LITE,
-        contents="Judge this post:\n\n" + post_json,
-        config=cfg,
-    )
+    resp = None
+    for attempt in range(1, GENERATION_RETRIES + 1):
+        try:
+            resp = _client().models.generate_content(
+                model=config.MODEL_LITE,
+                contents="Judge this post:\n\n" + post_json,
+                config=cfg,
+            )
+            break
+        except Exception as e:
+            if _is_transient(str(e)) and attempt < GENERATION_RETRIES:
+                time.sleep(2 ** attempt)
+                continue
+            raise
     text = (getattr(resp, "text", None) or "").strip()
     if not text:
         raise RuntimeError("Judge returned empty response")
@@ -160,6 +172,12 @@ def check(payload: PostPayload) -> ComplianceResult:
         if verdict.notes:
             notes_parts.append(f"judge: {verdict.notes}")
     except Exception as e:
+        # A transient judge failure (API 503/network) must NOT burn the brief —
+        # surface it so the pipeline preserves the brief and retries next run.
+        # Non-transient judge errors still fail closed (brief consumed).
+        from generation.generator import TransientError, _is_transient
+        if _is_transient(str(e)):
+            raise TransientError(f"compliance judge transient error: {e}") from e
         notes_parts.append(f"judge error (failed closed): {e}")
 
     all_failed = sorted(set(regex_failed) | set(judge_failed), key=lambda x: (len(x), x))

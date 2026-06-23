@@ -48,12 +48,18 @@ def run_slot(format_type: str, scheduled_at_iso: str) -> SlotResult:
         brief_id = store.brief_row_id(brief)
         try:
             fmt, payload = generator.generate(brief, allow_fallback=allow_fallback)
+            verdict = compliance.check(payload)
+        except generator.TransientError as e:
+            # API outage / network blip in generation OR the judge: keep the
+            # brief and stop — retrying more briefs would just burn them. The
+            # next scheduled (or catch-up) run retries this slot intact.
+            log.warning("transient API error; brief %s preserved, aborting slot: %s", brief_id, e)
+            return SlotResult("failed", f"transient API error (will retry next run): {e}")
         except generator.GenerationError as e:
             log.warning("generation failed (brief %s): %s", brief_id, e)
             store.mark_brief_used(brief_id)  # consume so we advance
             continue
 
-        verdict = compliance.check(payload)
         if not verdict.pass_:
             log.info("compliance rejected brief %s (checks %s): %s",
                      brief_id, verdict.failed_checks, verdict.notes)

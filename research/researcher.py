@@ -80,11 +80,23 @@ def _generate_text(prompt: str, use_grounding: bool) -> str:
         # only safe to request strict JSON mime when NOT grounding
         kwargs["response_mime_type"] = "application/json"
 
-    resp = _client().models.generate_content(
-        model=config.MODEL_FLASH,
-        contents=prompt,
-        config=types.GenerateContentConfig(**kwargs),
-    )
+    from generation.generator import GENERATION_RETRIES, _is_transient
+
+    resp = None
+    for attempt in range(1, GENERATION_RETRIES + 1):
+        try:
+            resp = _client().models.generate_content(
+                model=config.MODEL_FLASH,
+                contents=prompt,
+                config=types.GenerateContentConfig(**kwargs),
+            )
+            break
+        except Exception as e:
+            if _is_transient(str(e)) and attempt < GENERATION_RETRIES:
+                import time
+                time.sleep(2 ** attempt)
+                continue
+            raise
     text = (getattr(resp, "text", None) or "").strip()
     if not text:
         finish = None
