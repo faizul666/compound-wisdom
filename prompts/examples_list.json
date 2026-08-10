@@ -1,35 +1,32 @@
 [
   {
-    "title": "10 quiet money habits that compound over a lifetime",
-    "count": 10,
-    "list_image_template": "warm_gradient_list",
-    "intro_line": "These aren't dramatic moves. They're small disciplines that get more powerful the longer you keep them.",
+    "title": "7 mental models that make hard decisions easier",
+    "count": 7,
+    "list_image_template": "numbered_bold",
+    "intro_line": "A mental model is just a reliable way of seeing a problem. Collect enough of them and fewer decisions feel hard.",
     "items": [
-      {"name": "Automating savings before you see the paycheck", "explanation": "Money you don't see in checking doesn't feel available to spend. This single habit removes most of the friction from saving."},
-      {"name": "Waiting 24 hours on non-essential purchases over $100", "explanation": "Most regret purchases happen in the first hour of wanting something. A day's pause does most of the filtering for free."},
-      {"name": "Capturing half of every raise before it reaches your spending", "explanation": "Lifestyle inflation eats raises by default. Sending part of every increase straight to savings changes the trajectory of a career."},
-      {"name": "Keeping the same car for a few extra years", "explanation": "The gap between a paid-off car and a new payment is rarely visible in a single month, but enormous over a decade."},
-      {"name": "Reviewing recurring subscriptions every quarter", "explanation": "Subscriptions are designed to be forgotten. A 15-minute review four times a year quietly returns more than most people earn in side income."},
-      {"name": "Cooking at home four nights a week", "explanation": "Not every night. Four. The math doesn't require perfection — it requires a default."},
-      {"name": "Saying no to invitations that don't actually fit your life", "explanation": "Many social expenses are paid for the appearance of wanting to be there. Saying no clearly creates room for what you actually value."},
-      {"name": "Tracking net worth quarterly, not daily", "explanation": "Daily tracking creates anxiety and rarely changes behavior. Quarterly tracking shows the slope of the line."},
-      {"name": "Buying quality once instead of cheap three times", "explanation": "True for shoes, tools, furniture, and most things used weekly. The math favors quality whenever frequency of use is high."},
-      {"name": "Talking to your future self before big purchases", "explanation": "Picture yourself a year from now opening the statement. The honest answer to whether you'll be glad is usually known before you swipe the card."}
+      {"name": "Inversion", "explanation":"Instead of asking how to succeed, ask how to fail — then avoid that. Charlie Munger built a fortune mostly by not being stupid."},
+      {"name": "Opportunity cost", "explanation":"Every yes is a no to everything else you could do with that time or money. The real cost of a choice is the best thing you gave up."},
+      {"name": "Second-order thinking", "explanation":"Ask 'and then what?' A cheap decision today can be expensive in six months. Play the tape forward."},
+      {"name": "Circle of competence", "explanation":"Know the edge of what you actually understand, and be honest about it. Most big mistakes happen just outside that line."},
+      {"name": "Occam's razor", "explanation":"When explanations compete, the simplest that fits is usually right. Complexity is often a place to hide."},
+      {"name": "Margin of safety", "explanation":"Leave room for being wrong. Build the bridge to hold more than the heaviest truck you expect."},
+      {"name": "Confirmation bias", "explanation":"You find what you look for. Actively hunt for the evidence you'd rather not see before you commit."}
     ],
-    "closing_line": "None of these will make you wealthy this year. All of them will make you wealthy if you keep them."
+    "closing_line": "You don't need to be smarter than everyone. You just need a few good models and the discipline to actually use them."
   },
   {
-    "title": "5 things financially calm people stop doing",
+    "title": "5 habits that quietly compound over a decade",
     "count": 5,
     "list_image_template": "serif_list_card",
-    "intro_line": "Calm with money isn't about earning more. It's about quietly removing the patterns that make every decision feel hard.",
+    "intro_line": "None of these change your week. All of them change your decade.",
     "items": [
-      {"name": "Checking investment accounts more than once a week", "explanation": "Frequent checking creates the illusion of control while producing the cost of anxiety. Markets do not perform better when you watch more closely."},
-      {"name": "Letting friends and family talk them into purchases", "explanation": "Most financial regret can be traced to a decision made with someone else's enthusiasm rather than your own. Calm people take their excitement home before acting on it."},
-      {"name": "Treating raises as automatic permission to spend more", "explanation": "A raise is a moment of choice, not a default. Calm people pause to decide where the new money goes before momentum decides for them."},
-      {"name": "Comparing their money to people they barely know", "explanation": "Social media is a curated highlight reel of other people's spending, not their saving. Comparison to strangers is the most expensive habit there is."},
-      {"name": "Trying to optimize every dollar", "explanation": "Past a certain point, optimization stops earning and starts costing time and joy. Calm people pick a few rules that work and stop tinkering."}
+      {"name": "Read 20 pages a day", "explanation":"That's about 20-30 books a year. In ten years you've read more than most people do in a lifetime."},
+      {"name": "Automate one good decision", "explanation":"Save before you see the paycheck; lay tomorrow's clothes out tonight. Willpower is fragile; defaults aren't."},
+      {"name": "Walk every day", "explanation":"Not a workout — a walk. It's the most underrated tool for thinking clearly and staying steady."},
+      {"name": "Write things down", "explanation":"A short daily note turns a vague life into a reviewable one. What gets tracked gets understood."},
+      {"name": "Sleep like it's your job", "explanation":"Almost every skill you care about — focus, patience, memory, mood — is downstream of rest."}
     ],
-    "closing_line": "The peace of a calm financial life isn't built from one big decision. It's built from quietly retiring a handful of small ones."
+    "closing_line": "Boring, repeated, and undisturbed beats impressive and inconsistent. Pick one and start tonight."
   }
 ]

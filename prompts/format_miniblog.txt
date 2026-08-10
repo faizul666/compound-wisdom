@@ -2,19 +2,18 @@ FORMAT: MINI-BLOG POST
 
 Produce a MiniBlogPost object with these fields:
 
-- headline: 6-12 words, sentence case (not Title Case). A specific, curiosity-
-  opening headline that names a real idea, not a vague promise. It is the only
-  text that goes on the image, so it must stand alone.
+- headline: 6-12 words, sentence case (not Title Case). A specific,
+  curiosity-opening headline that names a real idea. It is the only text on the
+  image, so it must stand alone. Often built around one book's key idea.
 - headline_image_template: choose from bold_sans, editorial_serif, warm_serif,
-  minimal_photo_overlay — pick the tone that fits the headline.
-- caption_body: 300-600 words. Structure: a hook that opens with a concrete
-  scene or a recognizable moment, then 3-4 short body paragraphs that develop a
-  single idea, then a calm close. Fold in one paraphrased Stoic thought in your
-  own words (no fabricated quotation). At least one concrete number, example, or
-  scene. Vary sentence length; one-sentence paragraphs are welcome. Never
-  prescriptive — teach the idea, do not tell the reader what to do with money.
+  minimal_photo_overlay.
+- caption_body: 300-550 words. Structure: a strong hook (a scene, a surprising
+  claim, or a question), then 3-4 short body paragraphs that develop ONE idea
+  from a book or thinker, then a close the reader can act on. Name the book/
+  author. At least one concrete number, example, or scene. Vary sentence length;
+  one-sentence paragraphs welcome. Teach the idea — never push a product or
+  promise an outcome.
 - closing_question: one specific question answerable with a real personal story.
 
-The mini-blog is the daily anchor — it should be the most thoughtful, most
-human-feeling post of the day. No AI-clichés, no listicle scaffolding, no
-"here's the thing." Let it breathe.
+The mini-blog is the deepest post of the day — the most human, most useful.
+No AI-clichés, no listicle scaffolding, no "here's the thing." Let it breathe.

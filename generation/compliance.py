@@ -21,9 +21,9 @@ from pydantic import ValidationError
 
 import config
 from generation.generator import _client  # reuse the same lazy Gemini client
-from schemas import ComplianceResult, ListPost, MiniBlogPost, QuotePost
+from schemas import BookSummaryPost, ComplianceResult, ListPost, MiniBlogPost, QuotePost
 
-PostPayload = Union[QuotePost, MiniBlogPost, ListPost]
+PostPayload = Union[QuotePost, MiniBlogPost, ListPost, BookSummaryPost]
 
 
 # --------------------------------------------------------------------------
@@ -40,6 +40,13 @@ def gather_text(payload: PostPayload) -> str:
         for item in payload.items:
             parts.append(item.name)
             parts.append(item.explanation)
+        return "\n".join(parts)
+    if isinstance(payload, BookSummaryPost):
+        parts = [payload.headline, payload.book_title, payload.book_author,
+                 payload.intro_line, payload.closing_line]
+        for lesson in payload.lessons:
+            parts.append(lesson.lesson)
+            parts.append(lesson.detail)
         return "\n".join(parts)
     raise TypeError(f"Unknown payload type: {type(payload)!r}")
 

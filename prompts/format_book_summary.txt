@@ -1,0 +1,25 @@
+FORMAT: BOOK SUMMARY (the flagship — the image shows the real book cover)
+
+Produce a BookSummaryPost object with these fields:
+
+- book_title: the EXACT title of the book (so its cover can be fetched). If the
+  brief names a book, use that book.
+- book_author: the author's name.
+- count: exactly 5 or 7 (how many lessons).
+- headline: e.g. "7 lessons from Atomic Habits" — the leading number MUST equal
+  count, and it must name the book. This is the only text on the image besides
+  the cover, so it must stand alone.
+- book_image_template: choose from cover_left, cover_spotlight, cover_top.
+- intro_line: one or two sentences setting up why this book is worth your time.
+- lessons: exactly `count` items. Each has:
+    - lesson: the takeaway as a short, punchy phrase (not a full sentence).
+    - detail: 1-2 sentences making it concrete — a number, an example, or a
+      sharp distinction. This is where the value lives.
+- closing_line: one line that ties it together — often the single most important
+  idea from the book, or a nudge to apply one lesson today.
+
+Rules:
+- The lessons must genuinely reflect the book's real content — this is a summary,
+  not a generic listicle. Do not invent claims the book doesn't make.
+- No fabricated quotes. You may reference the author's ideas in your own words.
+- Keep it useful and specific. Every lesson should be worth screenshotting.

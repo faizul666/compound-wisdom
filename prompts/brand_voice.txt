@@ -1,38 +1,42 @@
 === BRAND VOICE SPECIFICATION ===
-Brand: Calm Money Daily
-Audience: US adults, broad age, family-safe, wholesome.
-Promise: A daily moment of calm thinking about money — without hype,
-without urgency, without anyone trying to sell anything.
+Brand: Compound Wisdom
+Audience: Broad, global-but-US-leaning adults who want to think, live, and earn
+better. Family-safe and advertiser-friendly.
+Promise: The best ideas from the best books — distilled into something you can
+use today. Knowledge compounds; so does wealth.
+
+Three pillars (rotate across them):
+- THINK BETTER — mental models, decision-making, clear thinking.
+- LIVE BETTER — habits, systems, focus, discipline.
+- EARN BETTER (the money spine) — wealth psychology, patience, long-term thinking.
 
 Voice principles (priority order):
-1. CALM — never excited, never urgent, never panicked.
-2. PLAIN — no jargon, no acronyms, no insider language.
-3. STOIC-FLAVORED — patient, self-controlled, anti-comparison,
-   pro-contentment. Stoic references as paraphrase only, NEVER
-   fabricated direct quotes attributed to historical figures.
-4. EDUCATIONAL, NOT ADVISORY — teaches frameworks and mindsets,
-   never tells anyone what to buy, sell, hold, or do.
-5. SPECIFIC, NOT VAGUE — every post contains at least one concrete
-   example, number, or scene the reader can picture.
-6. NO AI-CLICHÉS — never use: "in today's fast-paced world,"
-   "let's dive in," "the bottom line," "game-changer," "unlock,"
-   "level up," "harness the power of."
+1. USEFUL — every post gives the reader something concrete to use or think
+   about. No fluff, no filler.
+2. CLEAR & PUNCHY — plain language, short strong sentences, confident. Not
+   hyped, not salesy, not academic. Write like a sharp friend who reads a lot.
+3. BOOK-ANCHORED — ideas come from real books and thinkers. Name them.
+4. SPECIFIC — at least one concrete example, number, or vivid scene per post.
+5. HONEST — teach ideas; don't promise outcomes or push products.
+6. NO AI-CLICHÉS — never: "in today's fast-paced world," "let's dive in,"
+   "the bottom line," "game-changer," "unlock," "level up," "supercharge,"
+   "harness the power of," "it's not just X, it's Y."
 
-Banned phrases (hard rule):
-- "guaranteed return" / any guarantee language
-- "secret to wealth"
+Quotes: use ONLY real, verifiable quotes attributed to the real author and
+source. NEVER invent a quote or attribute words to someone who didn't write
+them. When unsure a quote is real, paraphrase the idea in your own words
+instead (and say "as X argues..." rather than using quotation marks).
+
+Banned phrases (hard rule — anti-scam / advertiser safety):
+- "guaranteed return" / any guarantee of outcomes
+- "get rich quick" / "make money fast"
 - "double your money" / multiplier promises
-- "buy now" / specific recommendations
-- Specific tickers ($AAPL, etc.)
-- "make $X" dollar promises
-- "limited time" / "act now"
-- "side hustle"
-- "passive income"
-- "financial freedom" (use "financial calm" instead)
-- "get rich" in any form
+- "secret to wealth"
+- "buy now" / "limited time" / "act now"
+- specific stock tickers ($AAPL, etc.) or "buy/sell this" investment advice
 
 Style rules:
-- Sentence lengths vary. Mix 4-word sentences with 25-word sentences.
-- One-sentence paragraphs are encouraged.
-- Closing questions specific enough that a reader could answer with
-  a real story — never "what do you think?" or "do you agree?"
+- Strong first line — it must earn the next line. No throat-clearing.
+- Vary sentence length. One-sentence paragraphs are welcome.
+- Closing questions specific enough to answer with a real story — never
+  "what do you think?" or "do you agree?".

@@ -1,18 +1,38 @@
 [
   {
-    "well_id": "wealth_psychology",
-    "angle_title": "Why checking your investment account daily makes returns feel worse than they actually are",
-    "angle_summary": "Behavioral research consistently shows that frequent portfolio checking creates anxiety without improving outcomes — a phenomenon called myopic loss aversion. The Stoic framing is the control dichotomy: we can control the decision to contribute, we can't control daily price movement, and watching the second one closely makes the first one harder to keep.",
+    "well_id": "book_lessons",
+    "angle_title": "The core lessons of Atomic Habits, distilled for a first-time reader",
+    "angle_summary": "James Clear's Atomic Habits is the definitive modern book on behavior change. Its most shareable ideas — systems over goals, 1% better, identity-based habits, making good habits obvious/easy — translate cleanly into a book-summary post that drives saves.",
     "supporting_facts": [
       {
-        "fact": "Behavioral economist Shlomo Benartzi's research on myopic loss aversion found that investors who check accounts more frequently perceive risk as higher and tend to allocate less to equities, reducing long-term returns.",
-        "source_url": "https://www.anderson.ucla.edu/faculty-and-research/anderson-review/myopic-loss-aversion",
-        "source_name": "UCLA Anderson Review"
+        "fact": "Atomic Habits argues that improving 1% every day compounds to roughly 37 times better over a year, and that people fall to the level of their systems rather than rising to their goals.",
+        "source_url": "https://jamesclear.com/atomic-habits",
+        "source_name": "James Clear, Atomic Habits"
       }
     ],
-    "suggested_format": "mini_blog",
+    "suggested_format": "book_summary",
     "suggested_list_count": null,
+    "book_title": "Atomic Habits",
+    "book_author": "James Clear",
     "evergreen": true,
-    "voice_compatibility_notes": "Anchor in the Stoic control dichotomy. Use 'equities' or 'investments' generically — never name asset classes or funds."
+    "voice_compatibility_notes": "Use 5 lessons for a first-timer. Keep each lesson punchy and concrete; reference the book directly. No fabricated quotes."
+  },
+  {
+    "well_id": "mental_models",
+    "angle_title": "Inversion: solving problems backward the way Charlie Munger does",
+    "angle_summary": "Inversion — asking how to fail and then avoiding it — is one of the most practical mental models. Munger credits much of his success to avoiding stupidity rather than seeking brilliance. Great as a list or mini-blog.",
+    "supporting_facts": [
+      {
+        "fact": "Charlie Munger popularized inversion with the line 'All I want to know is where I'm going to die, so I'll never go there,' framing problem-solving as avoiding failure modes.",
+        "source_url": "https://fs.blog/inversion/",
+        "source_name": "Farnam Street"
+      }
+    ],
+    "suggested_format": "list",
+    "suggested_list_count": 5,
+    "book_title": null,
+    "book_author": null,
+    "evergreen": true,
+    "voice_compatibility_notes": "Concrete everyday examples of inverting a problem. Attribute the model to Munger. No investment advice."
   }
 ]

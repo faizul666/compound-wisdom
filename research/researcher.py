@@ -46,23 +46,30 @@ def _client():
 
 
 def _build_prompt(n: int, avoid_titles: list[str]) -> str:
+    import random
+
+    import books
+
     examples = _read_prompt("examples_research.json")
     avoid = "\n".join(f"- {t}" for t in avoid_titles) or "(none yet)"
+    sample = random.sample(books.all_books(), min(16, len(books.all_books())))
+    book_list = "\n".join(f"- {t} by {a}" for t, a in sample)
     return "\n\n".join([
         _read_prompt("system_research.txt"),
-        "Here is an example brief showing the expected shape and quality:",
+        "Example briefs (shape and quality):",
         examples,
-        "Recently used angle titles to AVOID duplicating (do not repeat or "
-        "near-duplicate any of these):",
+        "Candidate books to draw from — prefer these, vary across them, use exact titles:",
+        book_list,
+        "Recently used angle titles to AVOID (no repeats or near-duplicates):",
         avoid,
-        f"Produce {n} new, distinct briefs spread across multiple wells.\n"
-        f"well_id MUST be EXACTLY one of: {', '.join(config.WELL_IDS)} "
-        "(do not invent new well ids).\n"
-        "suggested_format MUST be EXACTLY one of: quote, mini_blog, list.\n"
+        f"Produce {n} new, distinct briefs.\n"
+        f"well_id MUST be EXACTLY one of: {', '.join(config.WELL_IDS)} (do not invent well ids).\n"
+        "suggested_format MUST be EXACTLY one of: quote, mini_blog, list, book_summary.\n"
+        "For a book_summary brief: well_id must be 'book_lessons', and you MUST set "
+        "book_title and book_author to a real book (prefer the candidate list).\n"
         "suggested_list_count is 5 or 10 only when suggested_format is list, else null.\n"
-        "FORMAT MIX: the page posts 2 lists, 1 quote, and 1 mini_blog per day, so "
-        "weight this batch toward lists — at least half the briefs must be "
-        "suggested_format='list', with the rest split between quote and mini_blog.\n"
+        "FORMAT MIX: aim for a balanced spread — roughly equal numbers of "
+        "book_summary, list, quote, and mini_blog.\n"
         'Return ONLY the JSON object: {"briefs": [ ... ]}.',
     ])
 

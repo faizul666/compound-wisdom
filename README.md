@@ -1,12 +1,16 @@
-# Calm Money Daily
+# Compound Wisdom
 
-An autonomous content engine for a US-targeted personal-finance Facebook page.
-It researches angles, generates posts in three formats (quote, mini-blog, list),
-runs them through a compliance & voice gate, renders branded images with Pillow,
-schedules and publishes to Facebook, then collects performance data and feeds it
-back into topic selection. Zero manual input once running.
+An autonomous content engine for a broad self-improvement Facebook page. It
+distills the best ideas from bestselling non-fiction into four post formats —
+**book summary** (with the real book cover), **list**, **author quote**, and
+**mini-blog** — runs them through a compliance & quality gate, renders branded
+images with Pillow, and schedules/publishes to Facebook. Zero manual input once
+running.
 
-Calm, Stoic-flavored, no-hype voice. Educational, never advisory.
+Three pillars: **think better** (mental models), **live better** (habits), and
+**earn better** (a money spine). Voice is punchy and useful; quotes are real and
+author-attributed. (Pivoted in place from the earlier "Calm Money Daily" finance
+page — same pipeline, new niche.)
 
 ## Status
 

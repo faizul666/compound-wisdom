@@ -23,13 +23,14 @@ MiniBlogTemplate = Literal[
 ListTemplate = Literal[
     "numbered_bold", "serif_list_card", "warm_gradient_list", "minimal_dark"
 ]
+BookTemplate = Literal["cover_left", "cover_spotlight", "cover_top"]
 
 
 class QuotePost(BaseModel):
-    quote_text: str = Field(description="15-25 words, original wisdom in brand voice")
-    attribution: Literal["— Calm Money Daily"]
+    quote_text: str = Field(description="a real, verifiable quote from a book/author, 8-30 words")
+    attribution: str = Field(description="the real author and source, e.g. '— James Clear, Atomic Habits'")
     image_background_template: QuoteTemplate
-    caption_body: str = Field(description="200-400 words, reflective expansion")
+    caption_body: str = Field(description="150-320 words expanding on the idea")
     closing_question: str
 
 
@@ -50,10 +51,26 @@ class ListPost(BaseModel):
     # Plain int, not Literal[5, 10]: Gemini's response_schema only supports
     # string enums, so an int Literal breaks schema construction. The
     # "exactly 5 or 10" rule is enforced in the generator's _post_validate.
-    count: int = Field(description="exactly 5 or 10")
+    count: int = Field(description="exactly 5, 7, or 10")
     list_image_template: ListTemplate
     intro_line: str
     items: list[ListItem]
+    closing_line: str
+
+
+class BookLesson(BaseModel):
+    lesson: str = Field(description="the takeaway as a short punchy phrase")
+    detail: str = Field(description="1-2 sentences making it concrete")
+
+
+class BookSummaryPost(BaseModel):
+    book_title: str = Field(description="exact book title, so its cover can be fetched")
+    book_author: str = Field(description="the author's name")
+    count: int = Field(description="number of lessons, exactly 5 or 7")
+    headline: str = Field(description="e.g. '7 lessons from Atomic Habits'; leading number must equal count")
+    book_image_template: BookTemplate
+    intro_line: str
+    lessons: list["BookLesson"]
     closing_line: str
 
 
@@ -61,12 +78,12 @@ class ListPost(BaseModel):
 # Research
 # --------------------------------------------------------------------------
 WellId = Literal[
-    "daily_discipline",
-    "frugal_frameworks",
-    "wealth_psychology",
-    "stoic_money",
-    "common_mistakes",
-    "long_game",
+    "book_lessons",
+    "habits_systems",
+    "mental_models",
+    "money_psychology",
+    "clear_thinking",
+    "timeless_wisdom",
 ]
 
 
@@ -81,8 +98,11 @@ class ResearchBrief(BaseModel):
     angle_title: str
     angle_summary: str
     supporting_facts: list[SupportingFact]
-    suggested_format: Literal["quote", "mini_blog", "list"]
-    suggested_list_count: Optional[Literal[5, 10]] = None
+    suggested_format: Literal["quote", "mini_blog", "list", "book_summary"]
+    suggested_list_count: Optional[Literal[5, 7, 10]] = None
+    # For book_summary / book-anchored briefs: the specific book to feature.
+    book_title: Optional[str] = None
+    book_author: Optional[str] = None
     evergreen: bool
     voice_compatibility_notes: str
 

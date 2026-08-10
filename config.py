@@ -125,12 +125,12 @@ def kill_switch_active() -> bool:
 # Content wells — used by the research layer and the generator
 # --------------------------------------------------------------------------
 WELLS: dict[str, str] = {
-    "daily_discipline": "small habits, frugal rituals, automation, decision defaults",
-    "frugal_frameworks": "envelope budgeting, 50/30/20, no-spend, 24-hour rule",
-    "wealth_psychology": "patience, contentment, anti-comparison, behavioral biases",
-    "stoic_money": "paraphrased ancient wisdom (Seneca, Aurelius, Epictetus) — never fabricated quotes",
-    "common_mistakes": "lifestyle inflation, sunk-cost, panic-selling psychology",
-    "long_game": "compound interest illustrations, 30-year horizons, patience",
+    "book_lessons": "distilled lessons from ONE specific bestselling non-fiction book (the flagship format; carries the book cover)",
+    "habits_systems": "small habits, routines, systems, defaults, daily discipline",
+    "mental_models": "thinking tools, frameworks, and models for better decisions",
+    "money_psychology": "wealth mindset, patience, behavior with money (the money spine)",
+    "clear_thinking": "avoiding bias, focus, judgment, and clear decision-making",
+    "timeless_wisdom": "philosophy and enduring principles for living and working well",
 }
 WELL_IDS = tuple(WELLS.keys())
 
@@ -138,11 +138,12 @@ WELL_IDS = tuple(WELLS.keys())
 # Posting schedule — times are in TIMEZONE_TARGET (US Eastern), the audience clock.
 # (hour, minute, format_type). The scheduler converts these to triggers.
 # --------------------------------------------------------------------------
+# Balanced daily mix: one book summary, one list, one quote, one mini-blog.
 POSTING_SLOTS: tuple[tuple[int, int, str], ...] = (
-    (7, 0, "quote"),
+    (7, 0, "book_summary"),
     (12, 30, "list"),
-    (18, 0, "mini_blog"),
-    (21, 0, "list"),
+    (18, 0, "quote"),
+    (21, 0, "mini_blog"),
 )
 
 # Research runs twice daily, in Dhaka local time.
@@ -151,27 +152,27 @@ RESEARCH_SLOTS_DHAKA: tuple[tuple[int, int], ...] = (
     (22, 0),
 )
 
-FORMAT_TYPES = ("quote", "mini_blog", "list")
+FORMAT_TYPES = ("quote", "mini_blog", "list", "book_summary")
 
 # --------------------------------------------------------------------------
 # Brand
 # --------------------------------------------------------------------------
-BRAND_NAME = "Calm Money Daily"
-ATTRIBUTION = "— Calm Money Daily"
+BRAND_NAME = "Compound Wisdom"
 
 # Banned phrases — the regex pre-filter in compliance.py uses this list as the
 # source of truth so the judge and the cheap pre-filter never drift apart.
+# Anti-scam / advertiser-safety only (the calm-tone bans were dropped for this
+# broader self-improvement niche).
 BANNED_PHRASES: tuple[str, ...] = (
     "guaranteed return",
-    "secret to wealth",
+    "get rich quick",
     "double your money",
+    "secret to wealth",
     "buy now",
     "limited time",
     "act now",
-    "side hustle",
-    "passive income",
-    "financial freedom",
-    "get rich",
+    "make money fast",
+    "financial freedom guaranteed",
 )
 
 

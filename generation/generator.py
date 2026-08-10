@@ -21,9 +21,9 @@ from typing import Type, Union
 from pydantic import BaseModel, ValidationError
 
 import config
-from schemas import ListPost, MiniBlogPost, QuotePost, ResearchBrief
+from schemas import BookSummaryPost, ListPost, MiniBlogPost, QuotePost, ResearchBrief
 
-PostPayload = Union[QuotePost, MiniBlogPost, ListPost]
+PostPayload = Union[QuotePost, MiniBlogPost, ListPost, BookSummaryPost]
 
 
 class GenerationError(RuntimeError):
@@ -67,6 +67,7 @@ _FORMATS: dict[str, tuple[str, str, Type[BaseModel]]] = {
     "quote": ("format_quote.txt", "examples_quote.json", QuotePost),
     "mini_blog": ("format_miniblog.txt", "examples_miniblog.json", MiniBlogPost),
     "list": ("format_list.txt", "examples_list.json", ListPost),
+    "book_summary": ("format_book_summary.txt", "examples_book_summary.json", BookSummaryPost),
 }
 
 
@@ -192,33 +193,45 @@ def _parse_response(resp, schema: Type[BaseModel], format_type: str) -> PostPayl
 def _post_validate(format_type: str, payload: PostPayload, brief: ResearchBrief) -> None:
     """Structural checks the JSON schema can't express."""
     if isinstance(payload, ListPost):
-        if payload.count not in (5, 10):
-            raise GenerationError(f"list: count={payload.count} must be 5 or 10")
+        if payload.count not in (5, 7, 10):
+            raise GenerationError(f"list: count={payload.count} must be 5, 7, or 10")
         if len(payload.items) != payload.count:
             raise GenerationError(
                 f"list: count={payload.count} but {len(payload.items)} items returned"
+            )
+    if isinstance(payload, BookSummaryPost):
+        if payload.count not in (5, 7):
+            raise GenerationError(f"book_summary: count={payload.count} must be 5 or 7")
+        if len(payload.lessons) != payload.count:
+            raise GenerationError(
+                f"book_summary: count={payload.count} but {len(payload.lessons)} lessons returned"
             )
 
 
 # --------------------------------------------------------------------------
 # Offline fallback writer (no LLM) — deterministic, compliance-safe
 # --------------------------------------------------------------------------
-from schemas import ListItem  # noqa: E402  (local to the fallback path)
+from schemas import BookLesson, ListItem  # noqa: E402  (local to the fallback path)
 
-# A small pool of calm, on-brand, banned-phrase-free list items the fallback
-# slices to satisfy a list's count. Kept generic on purpose.
+# Generic, safe self-improvement items the fallback slices to fill a list.
 _FALLBACK_LIST_ITEMS = [
-    ("Automate saving before you see the money", "Money you never see in checking rarely feels available to spend."),
-    ("Wait a day on non-essential buys", "Most impulse urges fade within a day, doing the filtering for free."),
-    ("Save part of every raise first", "Lifestyle creep eats raises by default unless some is set aside first."),
-    ("Keep a working car a few extra years", "The gap between a paid-off car and a new payment compounds quietly."),
-    ("Review subscriptions each quarter", "A short review four times a year returns more than most expect."),
-    ("Cook at home a few nights a week", "It is a default, not a rule of perfection."),
-    ("Track net worth quarterly, not daily", "Quarterly checking shows the slope without the daily anxiety."),
-    ("Buy quality once for things used often", "For shoes, tools, and daily items the math favors buying well once."),
-    ("Picture your future self before big buys", "Imagine opening next year's statement before you decide today."),
-    ("Notice when a new normal is installed", "Lifestyle rises one reasonable upgrade at a time unless you watch."),
+    ("Systems beat goals", "You fall to the level of your systems, not the height of your goals. Design the routine."),
+    ("Aim for 1% better", "Tiny gains feel invisible daily but compound to roughly 37x over a year."),
+    ("Reduce friction", "Most habits fail on friction, not willpower. Make the good option the easy one."),
+    ("Use inversion", "Ask how you'd fail, then avoid that. Munger built a fortune mostly by not being stupid."),
+    ("Think second-order", "Ask 'and then what?' A cheap choice today can be expensive in six months."),
+    ("Protect deep focus", "One undistracted hour beats a whole day of half-attention. Guard it."),
+    ("Save without a reason", "Savings buys options and control over your time — the highest dividend money pays."),
+    ("Never miss twice", "One missed day is an accident; two starts a new pattern. Bounce back fast."),
+    ("Read 20 pages a day", "That's 20-30 books a year — more than most people read in a decade."),
+    ("Leave a margin of safety", "Plans fail. Room for error is what keeps a bad year from ending the game."),
 ]
+
+# Real, safe quote used by the keyless fallback (never fabricated).
+_FALLBACK_QUOTE = (
+    "You do not rise to the level of your goals. You fall to the level of your systems.",
+    "— James Clear, Atomic Habits",
+)
 
 
 def _fallback_generate(brief: ResearchBrief) -> PostPayload:
@@ -228,15 +241,14 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
 
     if brief.suggested_format == "quote":
         return QuotePost(
-            quote_text=brief.angle_title.strip().rstrip(".") + ".",
-            attribution="— Calm Money Daily",
+            quote_text=_FALLBACK_QUOTE[0],
+            attribution=_FALLBACK_QUOTE[1],
             image_background_template="serif_card",
             caption_body=(
                 f"{summary}\n\n{fact}\n\n"
-                "The calm approach is not about doing more. It is about noticing "
-                "the quiet choices that shape a financial life over years."
+                "The idea is simple: decide the system once, then let repetition do the work."
             ),
-            closing_question="When did you last feel calm about a money decision, and why?",
+            closing_question="What's one system you set up once that still pays off today?",
         )
 
     if brief.suggested_format == "mini_blog":
@@ -245,25 +257,40 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
             headline_image_template="editorial_serif",
             caption_body=(
                 f"{summary}\n\n{fact}\n\n"
-                "None of this asks for urgency. It asks for patience, repeated "
-                "quietly, for long enough that the small choices add up.\n\n"
-                "That is the whole idea: a calmer relationship with money, built "
-                "one unremarkable decision at a time."
+                "The useful part isn't the big insight — it's the small, repeatable "
+                "action you can take today and keep taking.\n\n"
+                "That's how good ideas compound: quietly, undisturbed, for longer than feels exciting."
             ),
-            closing_question="What is one small money habit you have kept longer than you expected?",
+            closing_question="What's one idea from a book that actually changed how you act?",
+        )
+
+    if brief.suggested_format == "book_summary":
+        count = 5
+        title = brief.book_title or "Atomic Habits"
+        author = brief.book_author or "James Clear"
+        lessons = [BookLesson(lesson=n, detail=d) for n, d in _FALLBACK_LIST_ITEMS[:count]]
+        return BookSummaryPost(
+            book_title=title,
+            book_author=author,
+            count=count,
+            headline=f"{count} lessons from {title}",
+            book_image_template="cover_left",
+            intro_line=summary or f"The core ideas from {title}, distilled.",
+            lessons=lessons,
+            closing_line="Pick one lesson and act on it today — that's how books actually change anything.",
         )
 
     # list
     count = brief.suggested_list_count or 5
-    items = [ListItem(name=n, explanation=e) for n, e in _FALLBACK_LIST_ITEMS[:count]]
+    items = [ListItem(name=n, explanation=d) for n, d in _FALLBACK_LIST_ITEMS[:count]]
     title = brief.angle_title.strip()
     if not title[:2].strip().isdigit():
         title = f"{count} {title}"
     return ListPost(
         title=title,
         count=count,  # type: ignore[arg-type]
-        list_image_template="warm_gradient_list",
-        intro_line="These are small, repeatable habits — gentler than they look, and powerful over time.",
+        list_image_template="numbered_bold",
+        intro_line="A few ideas worth keeping — each one small enough to use this week.",
         items=items,
-        closing_line="None of these change a year. All of them change a decade.",
+        closing_line="Boring, repeated, and undisturbed beats impressive and inconsistent.",
     )

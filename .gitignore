@@ -12,6 +12,7 @@ venv/
 data/calm_money.db
 data/calm_money.db-journal
 data/generated_images/
+data/covers/
 data/*.lock
 data/KILL_SWITCH
 logs/

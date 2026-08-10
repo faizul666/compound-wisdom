@@ -16,18 +16,19 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Union
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+import books
 import config
-from schemas import ListPost, MiniBlogPost, QuotePost
+from schemas import BookSummaryPost, ListPost, MiniBlogPost, QuotePost
 
-PostPayload = Union[QuotePost, MiniBlogPost, ListPost]
+PostPayload = Union[QuotePost, MiniBlogPost, ListPost, BookSummaryPost]
 
 # Canvas sizes
 SQUARE = (1080, 1080)        # quotes
-PORTRAIT = (1080, 1350)      # mini-blog + list
+PORTRAIT = (1080, 1350)      # mini-blog + list + book summary
 MARGIN = 110
-BRAND = "CALM MONEY DAILY"
+BRAND = "COMPOUND WISDOM"
 
 FontFamily = Literal["serif", "display", "sans"]
 _FONT_FILES = {"serif": "Lora.ttf", "display": "Playfair.ttf", "sans": "Inter.ttf"}
@@ -105,6 +106,12 @@ LIST_TEMPLATES: dict[str, Style] = {
     "serif_list_card": Style("card", (231, 222, 207), (231, 222, 207), (49, 45, 38), _TAN, "serif", 600, card=_CREAM),
     "warm_gradient_list": Style("gradient", (246, 231, 216), (233, 207, 184), _INK, _TAN, "display", 600),
     "minimal_dark": Style("dark", _DARK, _DARK, (237, 234, 224), (197, 168, 128), "sans", 600),
+}
+
+BOOK_TEMPLATES: dict[str, Style] = {
+    "cover_left": Style("solid", (243, 241, 236), (243, 241, 236), (38, 37, 34), _TAN, "serif", 600),
+    "cover_spotlight": Style("dark", _DARK, _DARK, (237, 234, 224), (197, 168, 128), "sans", 700),
+    "cover_top": Style("gradient", (246, 231, 216), (233, 207, 184), _INK, _TAN, "display", 600),
 }
 
 
@@ -223,8 +230,12 @@ def _render_quote(p: QuotePost, well_id: str) -> Image.Image:
     top = (size[1] - block_h) / 2 - 10
     end = _draw_block(draw, lines, fnt, cx, int(top), style.ink, 1.2)
 
-    # attribution
-    afnt = font("sans", 30, 500)
+    # attribution (author + book) — shrink to fit width
+    asize = 30
+    afnt = font("sans", asize, 500)
+    while afnt.getlength(p.attribution) > (size[0] - 2 * MARGIN) and asize > 18:
+        asize -= 2
+        afnt = font("sans", asize, 500)
     aw = afnt.getlength(p.attribution)
     draw.text((cx - aw / 2, end + 26), p.attribution, font=afnt, fill=style.accent)
 
@@ -280,10 +291,55 @@ def _render_list(p: ListPost, well_id: str) -> Image.Image:
     return img
 
 
+def _render_book_summary(p: BookSummaryPost, well_id: str) -> Image.Image:
+    style = BOOK_TEMPLATES.get(p.book_image_template, BOOK_TEMPLATES["cover_left"])
+    size = PORTRAIT
+    base = _background(size, style).convert("RGBA")
+    cx = size[0] // 2
+    max_w = size[0] - 2 * MARGIN
+
+    draw = ImageDraw.Draw(base)
+    _kicker(draw, "book lessons", cx, 120, style)
+
+    cover_top, target_h = 235, 560
+    cover_bottom = cover_top + 90  # fallback if no cover
+    cover_path = books.fetch_cover(p.book_title, p.book_author)
+    if cover_path:
+        try:
+            cover = Image.open(cover_path).convert("RGB")
+            ratio = target_h / cover.height
+            w = int(cover.width * ratio)
+            cover = cover.resize((w, target_h), Image.LANCZOS)
+            x = cx - w // 2
+            shadow = Image.new("RGBA", size, (0, 0, 0, 0))
+            ImageDraw.Draw(shadow).rectangle(
+                [x, cover_top + 20, x + w, cover_top + target_h + 28], fill=(0, 0, 0, 150)
+            )
+            base.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(22)))
+            base.paste(cover, (x, cover_top))
+            cover_bottom = cover_top + target_h
+        except Exception:
+            cover_bottom = cover_top + 90
+
+    draw = ImageDraw.Draw(base)  # re-bind after paste
+    fnt, lines, _ = _fit(p.headline, style.title_family, style.title_weight,
+                         max_w, 200, hi=62, lo=34)
+    end = _draw_block(draw, lines, fnt, cx, cover_bottom + 55, style.ink, 1.14)
+
+    afnt = font("sans", 30, 500)
+    atext = f"by {p.book_author}"
+    aw = afnt.getlength(atext)
+    draw.text((cx - aw / 2, end + 14), atext, font=afnt, fill=style.accent)
+
+    _footer(draw, size, style)
+    return base.convert("RGB")
+
+
 _RENDERERS = {
     QuotePost: _render_quote,
     MiniBlogPost: _render_miniblog,
     ListPost: _render_list,
+    BookSummaryPost: _render_book_summary,
 }
 
 
@@ -300,7 +356,8 @@ def render(payload: PostPayload, well_id: str, out_dir: Path | None = None) -> P
     out_dir = out_dir or config.GENERATED_IMAGES_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    fmt = {QuotePost: "quote", MiniBlogPost: "miniblog", ListPost: "list"}[type(payload)]
+    fmt = {QuotePost: "quote", MiniBlogPost: "miniblog", ListPost: "list",
+           BookSummaryPost: "book"}[type(payload)]
     path = out_dir / f"{fmt}_{_slug(payload)}.png"
     img = renderer(payload, well_id)
     img.save(path, "PNG")
