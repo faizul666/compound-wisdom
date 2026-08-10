@@ -1,8 +1,10 @@
-"""Generate a value/outcome reel script with Gemini.
+"""Generate a value reel script with Gemini + Google Search grounding.
 
-Book-agnostic on purpose: the ideas can come from great books, but the reel
-NEVER names a book or author — it delivers the value directly. Returns a
-ReelScript (hook, spoken voiceover, b-roll keywords, caption, hashtags).
+Grounding matters here: the reel's edge over faceless AI pages is that it cites a
+REAL name, number, and year (with a caveat) instead of "studies show". Grounding
+and response_schema are mutually exclusive, so we prompt for raw JSON and parse
+it into a ReelScript. Book-agnostic framing (never "in this book"), but naming
+the underlying researcher/thinker is encouraged.
 """
 from __future__ import annotations
 
@@ -17,29 +19,55 @@ from generation.generator import (
     _client,
     _is_transient,
 )
+from research.researcher import _extract_json
 from schemas import ReelScript
 
-REEL_SYSTEM = """You write short-form vertical video scripts (Reels) for Compound Wisdom.
-Each reel delivers ONE piece of genuinely useful, outcome-oriented advice that a
-viewer can act on. You inherit the brand voice specification in full.
+REEL_SYSTEM = """You write short vertical video scripts (Reels) for a broad
+self-improvement audience. Each reel delivers ONE genuinely useful, surprising
+idea backed by a real, specific piece of research. You inherit the brand voice.
 
-Hard rules:
-- NEVER mention a book, an author, "in this book", or "studies show". Deliver the
-  value directly, as if from a sharp mentor.
-- The FIRST sentence is a scroll-stopping hook: a bold claim, a sharp question, or
-  a "most people get this wrong" opener. It must work in the first 3 seconds.
-- Structure the voiceover as: hook -> 3 tight, concrete value beats -> a short
-  payoff or call to reflect. ~90-130 spoken words total.
-- Plain spoken sentences only. No emojis, no numbered lists, no stage directions,
-  no hashtags inside the voiceover.
-- Outcome framing: connect the advice to a result the viewer wants.
-- broll_keywords: 4-6 concrete, filmable visual terms (e.g. "person running at
-  sunrise", "coffee morning routine", "city commute", "writing in notebook").
-- caption: a punchy hook line, one or two lines of value, then a soft CTA
-  (e.g. "Save this for later.").
-- hashtags: 6-10 broad self-improvement tags without the # sign.
+NON-NEGOTIABLE RULES:
 
-Return ONLY the ReelScript object."""
+1. NAME THE THING IN THE HOOK. The claim itself is the hook. Never withhold the
+   subject with "this", "the secret", "the one thing", "do this", "the question".
+   BAD: "The question that kills bad decisions." GOOD: "Munger never asked how to
+   succeed. He asked how to guarantee failure, then avoided that."
+
+2. MAKE THE RESEARCH VISIBLE. Every reel must contain at least one real name,
+   number, and year that a lazy competitor wouldn't look up. Say who, how many,
+   what year. Include a caveat if the finding is limited ("only replicated a few
+   times") — the caveat builds trust and drives comments. Do NOT fabricate: use
+   only real, verifiable specifics. Never mention a book title or "in this book".
+
+2b. ORIGINAL WORDS ONLY. The idea may come from a book, but express it entirely
+   in your own original phrasing. Never reproduce a book's exact wording, its
+   famous one-liner, or its sentence structure — reframe the idea so it reads as
+   your own insight, not a copied quote. (Naming a real researcher or study with
+   a number and year is a fact and is allowed; lifting an author's memorable line
+   is not.)
+
+3. FIVE BEATS, ~25-30 seconds total, spoken plainly (no emojis, no lists). Keep
+   each beat TIGHT — respect the word caps:
+   - hook_claim (<=12 words): the concrete claim, no setup. Start on a number or
+     hard word, never "So" or "The".
+   - evidence (<=22 words): the real name + number + year (+ caveat).
+   - mechanism (<=38 words): WHY it's true. The meat — but say it in ONE sharp
+     idea, not three. Most reels are empty here; you are not, but stay brief.
+   - action (<=24 words): one specific thing to do tomorrow, as a plain sentence.
+   - question (<=14 words): a BINARY, answerable question that invites a comment
+     ("Which one are you?", "Car or house — which got you?"). Not "follow for more".
+
+4. key_stat: the single number or name to flash big on screen (e.g. "66 DAYS").
+5. source_note: the citation, e.g. "Lally, University College London, 2009".
+6. broll_keywords: 5-8 CONCRETE nouns that literally illustrate the words/numbers
+   (e.g. "calendar pages flipping", "stack of coins", "runner tying shoes"). BANNED
+   (they are the visual signature of AI slop): "man in suit walking through city",
+   "woman journaling by a window", "hands typing on laptop", "city timelapse",
+   "person staring at sunset".
+
+Return ONLY a JSON object with keys: hook_text, hook_claim, evidence, mechanism,
+action, question, key_stat, source_note, broll_keywords, caption, hashtags.
+No markdown fences, no commentary."""
 
 
 def _system_instruction() -> str:
@@ -47,32 +75,21 @@ def _system_instruction() -> str:
     return brand + "\n\n" + REEL_SYSTEM
 
 
-def generate(theme: str | None = None) -> tuple[str, ReelScript]:
-    """Generate a reel script for a theme (a well). Returns (theme, ReelScript)."""
-    config.require("GEMINI_API_KEY")
+def _call(prompt: str, use_grounding: bool) -> str:
     from google.genai import types
 
-    if theme is None:
-        theme = random.choice(list(config.WELLS))
-    theme_desc = config.WELLS.get(theme, theme)
-
-    cfg = types.GenerateContentConfig(
-        system_instruction=_system_instruction(),
-        temperature=0.95,
-        max_output_tokens=2048,
-        response_mime_type="application/json",
-        response_schema=ReelScript,
-    )
-    prompt = (
-        f"Write one value reel in the theme of {theme} ({theme_desc}). "
-        "Pick a single specific, useful idea and make it outcome-oriented. "
-        "Remember: never mention a book or author."
-    )
+    kwargs = dict(system_instruction=_system_instruction(), temperature=0.9,
+                  max_output_tokens=2048)
+    if use_grounding:
+        kwargs["tools"] = [types.Tool(google_search=types.GoogleSearch())]
+    else:
+        kwargs["response_mime_type"] = "application/json"
 
     for attempt in range(1, GENERATION_RETRIES + 1):
         try:
             resp = _client().models.generate_content(
-                model=config.MODEL_FLASH, contents=prompt, config=cfg
+                model=config.MODEL_FLASH, contents=prompt,
+                config=types.GenerateContentConfig(**kwargs),
             )
             break
         except Exception as e:
@@ -83,15 +100,40 @@ def generate(theme: str | None = None) -> tuple[str, ReelScript]:
                 raise TransientError(f"reel script transient error after {attempt}: {e}") from e
             raise GenerationError(f"reel script generation failed: {e}") from e
 
-    parsed = getattr(resp, "parsed", None)
-    if isinstance(parsed, ReelScript):
-        script = parsed
-    else:
-        text = (getattr(resp, "text", None) or "").strip()
-        if not text:
-            raise GenerationError("reel script: empty model response")
-        script = ReelScript.model_validate_json(text)
+    text = (getattr(resp, "text", None) or "").strip()
+    if not text:
+        raise GenerationError("reel script: empty model response")
+    return text
 
-    if len(script.voiceover.split()) < 30:
-        raise GenerationError("reel script: voiceover too short")
+
+def generate(theme: str | None = None) -> tuple[str, ReelScript]:
+    """Generate a reel script for a theme (a well). Returns (theme, ReelScript)."""
+    config.require("GEMINI_API_KEY")
+    if theme is None:
+        # Reels are book-agnostic, so exclude the book_lessons well.
+        reel_wells = [w for w in config.WELLS if w != "book_lessons"]
+        theme = random.choice(reel_wells)
+    theme_desc = config.WELLS.get(theme, theme)
+
+    prompt = (
+        f"Write ONE value reel in the theme of {theme} ({theme_desc}). "
+        "Pick a single specific, surprising idea and find a REAL study or thinker "
+        "with a name, number, and year to anchor it. Follow the five-beat structure."
+    )
+
+    want_grounding = config.RESEARCH_USE_GROUNDING
+    try:
+        text = _call(prompt, want_grounding)
+    except TransientError:
+        raise
+    except Exception:
+        if want_grounding:
+            text = _call(prompt, False)  # ungrounded fallback
+        else:
+            raise
+
+    data = _extract_json(text)
+    script = ReelScript.model_validate(data)
+    if len((script.mechanism + " " + script.hook_claim).split()) < 15:
+        raise GenerationError("reel script: too thin")
     return theme, script

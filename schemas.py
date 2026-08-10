@@ -75,16 +75,22 @@ class BookSummaryPost(BaseModel):
 
 
 class ReelScript(BaseModel):
-    """A value/outcome-based short-video script. Never mentions a book."""
-    hook_text: str = Field(description="the on-screen opening hook, 4-8 punchy words")
-    voiceover: str = Field(
-        description="the full spoken script, ~90-130 words, starting with the hook. "
-                    "Structured as hook -> 3 tight value beats -> payoff/CTA. Plain "
-                    "spoken sentences, no emojis, no headings, no book references."
-    )
-    broll_keywords: list[str] = Field(description="4-6 concrete visual search terms for stock b-roll")
-    caption: str = Field(description="the Facebook caption: a hook line + short value + a soft CTA")
+    """A value reel, structured as 5 timed beats (~25s). Not a book promo, but it
+    DOES cite real research (name + number + year) — that's the differentiator."""
+    hook_text: str = Field(description="on-screen hook, 4-8 words, that NAMES the specific claim (never 'this'/'the secret'/'do this')")
+    hook_claim: str = Field(description="spoken 0-2s: the concrete surprising claim, no setup, starting on a number or hard word (never 'So'/'The')")
+    evidence: str = Field(description="spoken 2-5s: a REAL specific — a named person or study, a number, and a year; add a short caveat if apt")
+    mechanism: str = Field(description="spoken 5-15s: WHY it's true — the actual mechanism (this is the meat)")
+    action: str = Field(description="spoken 15-22s: ONE specific action, stated as a sentence someone could do tomorrow")
+    question: str = Field(description="spoken 22-25s: a binary/answerable question that invites a comment (e.g. 'Which one are you?')")
+    key_stat: str = Field(description="the single headline number or name to show BIG on screen, e.g. '66 DAYS' or 'MUNGER'")
+    source_note: str = Field(description="the citation for the caption, e.g. 'Lally, University College London, 2009'")
+    broll_keywords: list[str] = Field(description="5-8 CONCRETE visual nouns that literally illustrate the claim/numbers (e.g. 'calendar pages flipping', 'stack of coins'); NO cliches")
+    caption: str = Field(description="the Facebook caption: hook line + the specific stat + a soft CTA like 'Save this.'")
     hashtags: list[str] = Field(description="6-10 broad self-improvement hashtags, without the # sign")
+
+    def beats(self) -> list[str]:
+        return [self.hook_claim, self.evidence, self.mechanism, self.action, self.question]
 
 
 # --------------------------------------------------------------------------

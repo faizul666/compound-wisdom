@@ -41,9 +41,23 @@ def _pick_music() -> "object | None":
     return random.choice(tracks) if tracks else None
 
 
+_BANNED_BROLL = (
+    "man in suit", "walking through city", "journaling", "hands on laptop",
+    "typing on laptop", "city timelapse", "staring at sunset", "sunset over",
+    "woman looking out",
+)
+
+
+def _clean_keywords(kws: list[str]) -> list[str]:
+    """Drop cliche AI-slop b-roll terms; keep the concrete ones."""
+    kept = [k for k in kws if not any(b in k.lower() for b in _BANNED_BROLL)]
+    return kept or kws
+
+
 def _caption(script) -> str:
     tags = " ".join("#" + h.lstrip("#") for h in script.hashtags)
-    return f"{script.caption}\n\n{tags}"
+    src = f"\n\nSource: {script.source_note}" if getattr(script, "source_note", "") else ""
+    return f"{script.caption}{src}\n\n{tags}"
 
 
 def main() -> int:
@@ -85,12 +99,15 @@ def main() -> int:
         reel_dir.mkdir(parents=True, exist_ok=True)
 
         vo_path = reel_dir / "vo.mp3"
-        words = voice.synthesize(spec.voiceover, vo_path)
+        words, spans = voice.synthesize_beats(spec.beats(), vo_path)
         need = words[-1].end if words else config.REEL_TARGET_SECONDS
-        log.info("voiceover %.1fs, %d words", need, len(words))
+        hook_span = spans[0]
+        stat_span = spans[1] if len(spans) > 1 else None  # the evidence beat
+        log.info("voiceover %.1fs, %d words, %d beats", need, len(words), len(spans))
 
+        keywords = _clean_keywords(spec.broll_keywords)
         try:
-            clips = broll.fetch_clips(spec.broll_keywords, clips_dir, need)
+            clips = broll.fetch_clips(keywords, clips_dir, need)
         except Exception as e:
             log.error("b-roll fetch failed: %s", e)
             return 1
@@ -99,7 +116,11 @@ def main() -> int:
         music = _pick_music()
         ts = datetime.now(pytz.utc).strftime("%Y%m%d_%H%M%S")
         out = reel_dir / f"reel_{ts}.mp4"
-        assemble.assemble(clips, vo_path, words, spec.hook_text, out, music)
+        assemble.assemble(
+            clips, vo_path, words, out,
+            hook_text=spec.hook_text, hook_span=hook_span,
+            stat_text=spec.key_stat, stat_span=stat_span, music_path=music,
+        )
         log.info("assembled %s (%d KB)", out.name, out.stat().st_size // 1024)
 
         try:
