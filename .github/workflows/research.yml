@@ -1,0 +1,44 @@
+name: Compound Wisdom — research
+
+on:
+  schedule:
+    - cron: "10 8 * * *"    # ~2 PM Dhaka — top up the queue before the day's posts
+    - cron: "10 16 * * *"   # ~10 PM Dhaka
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: compound-wisdom-state
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      RESEARCH_USE_GROUNDING: ${{ vars.RESEARCH_USE_GROUNDING || '1' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Generate briefs
+        run: python run_research.py
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/calm_money.db
+          if git diff --staged --quiet; then echo "no state change"; exit 0; fi
+          git commit -m "chore: research briefs [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash origin main && git push origin main && exit 0
+            echo "push attempt $i failed; retrying in 5s"; sleep 5
+          done
+          echo "could not push state after retries"; exit 1

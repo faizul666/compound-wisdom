@@ -8,8 +8,8 @@ __pycache__/
 venv/
 *.egg-info/
 
-# runtime data (DB + rendered images are not source)
-data/calm_money.db
+# runtime data. NOTE: calm_money.db IS tracked — GitHub Actions persists state
+# by committing it back after each run. Only the transient journal + media are ignored.
 data/calm_money.db-journal
 data/generated_images/
 data/covers/
@@ -23,8 +23,7 @@ assets/music/*.m4a
 logs/
 *.log
 
-# downloaded font binaries (fetched via get_fonts.py)
-images/fonts/*.ttf
+# fonts ARE tracked (committed for CI so runs don't re-download them).
 
 # review artifacts from the Phase 2 generation run
 review/

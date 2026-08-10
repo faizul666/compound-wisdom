@@ -1,0 +1,63 @@
+name: Compound Wisdom — post
+
+on:
+  schedule:
+    # Cron is UTC and fixed (no DST). run_due posts the OLDEST due-but-unposted
+    # slot, one per run, with a whole-day catch-up window — so these spread-out
+    # runs post each of the 4 daily slots on time in both EST and EDT, and
+    # GitHub's scheduling delays are absorbed. Minutes are off :00 (GitHub
+    # drops/delays top-of-hour runs).
+    - cron: "18 11 * * *"   # ~ quote slot (7:00 ET)
+    - cron: "3 13 * * *"    #   catch-up
+    - cron: "47 16 * * *"   # ~ list slot (12:30 ET)
+    - cron: "3 19 * * *"    #   catch-up
+    - cron: "22 22 * * *"   # ~ mini-blog slot (18:00 ET)
+    - cron: "18 0 * * *"    #   catch-up
+    - cron: "18 2 * * *"    # ~ list slot (21:00 ET)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Render + record but do not post"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: compound-wisdom-state
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+      FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+      FB_GRAPH_VERSION: ${{ vars.FB_GRAPH_VERSION || 'v25.0' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      DRY_RUN: ${{ github.event.inputs.dry_run || vars.DRY_RUN || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Post whatever slot is due
+        run: python run_due.py
+      - name: Commit updated state
+        if: ${{ env.DRY_RUN != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/calm_money.db
+          if git diff --staged --quiet; then echo "no state change"; exit 0; fi
+          git commit -m "chore: update state [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash origin main && git push origin main && exit 0
+            echo "push attempt $i failed; retrying in 5s"; sleep 5
+          done
+          echo "could not push state after retries"; exit 1
