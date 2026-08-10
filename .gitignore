@@ -13,8 +13,13 @@ data/calm_money.db
 data/calm_money.db-journal
 data/generated_images/
 data/covers/
+data/reels/
 data/*.lock
 data/KILL_SWITCH
+
+# music tracks (drop your own royalty-free files here; not committed)
+assets/music/*.mp3
+assets/music/*.m4a
 logs/
 *.log
 

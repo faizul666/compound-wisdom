@@ -74,6 +74,19 @@ class BookSummaryPost(BaseModel):
     closing_line: str
 
 
+class ReelScript(BaseModel):
+    """A value/outcome-based short-video script. Never mentions a book."""
+    hook_text: str = Field(description="the on-screen opening hook, 4-8 punchy words")
+    voiceover: str = Field(
+        description="the full spoken script, ~90-130 words, starting with the hook. "
+                    "Structured as hook -> 3 tight value beats -> payoff/CTA. Plain "
+                    "spoken sentences, no emojis, no headings, no book references."
+    )
+    broll_keywords: list[str] = Field(description="4-6 concrete visual search terms for stock b-roll")
+    caption: str = Field(description="the Facebook caption: a hook line + short value + a soft CTA")
+    hashtags: list[str] = Field(description="6-10 broad self-improvement hashtags, without the # sign")
+
+
 # --------------------------------------------------------------------------
 # Research
 # --------------------------------------------------------------------------

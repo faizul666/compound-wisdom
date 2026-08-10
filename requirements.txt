@@ -6,3 +6,5 @@ APScheduler>=3.10         # timezone-aware cron scheduling
 pytz>=2024.1              # timezone math (ET / Dhaka)
 requests>=2.31            # Facebook Graph API + analytics
 python-dotenv>=1.0        # .env config loading
+edge-tts>=7.0            # reel voiceover (Microsoft Edge neural TTS, free, no key)
+imageio-ffmpeg>=0.5      # bundles a static ffmpeg for reel video assembly

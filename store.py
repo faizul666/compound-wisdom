@@ -145,3 +145,26 @@ def mark_post_failed(post_id: int, reason: str) -> None:
             "UPDATE posts SET status='failed', failure_reason=? WHERE id=?",
             (reason[:500], post_id),
         )
+
+
+# --------------------------------------------------------------------------
+# Reels (tracked separately — no brief FK)
+# --------------------------------------------------------------------------
+def reel_already_posted(scheduled_at_iso: str) -> bool:
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT 1 FROM reels WHERE scheduled_at=? AND status='posted' LIMIT 1",
+            (scheduled_at_iso,),
+        ).fetchone()
+    return row is not None
+
+
+def record_reel(scheduled_at_iso: str, theme: str, video_path: str, fb_video_id: str) -> None:
+    now = utc_now_iso()
+    with get_conn() as conn:
+        conn.execute(
+            """INSERT OR REPLACE INTO reels
+               (scheduled_at, theme, video_path, fb_video_id, status, created_at, posted_at)
+               VALUES (?,?,?,?, 'posted', ?, ?)""",
+            (scheduled_at_iso, theme, video_path, fb_video_id, now, now),
+        )

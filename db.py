@@ -47,6 +47,18 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE INDEX IF NOT EXISTS idx_posts_status_schedule
     ON posts(status, scheduled_at);
 
+CREATE TABLE IF NOT EXISTS reels (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    scheduled_at TIMESTAMP NOT NULL,
+    theme TEXT,
+    video_path TEXT,
+    fb_video_id TEXT,
+    status TEXT NOT NULL DEFAULT 'posted',
+    created_at TIMESTAMP NOT NULL,
+    posted_at TIMESTAMP,
+    UNIQUE(scheduled_at)
+);
+
 CREATE TABLE IF NOT EXISTS performance (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER NOT NULL,
