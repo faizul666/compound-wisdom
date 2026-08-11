@@ -17,14 +17,14 @@ _HEADER = """[Script Info]
 ScriptType: v4.00+
 PlayResX: 1080
 PlayResY: 1920
-WrapStyle: 2
+WrapStyle: 0
 ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Caption, Inter, 86, {white}, {white}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 8, 3, 2, 70, 70, 440, 1
-Style: Hook, Inter, 100, {accent}, {accent}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 5, 8, 8, 70, 70, 300, 1
-Style: Stat, Inter, 200, {accent}, {accent}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 8, 6, 5, 60, 60, 0, 1
+Style: Caption, Inter, 78, {white}, {white}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 7, 3, 2, 100, 100, 430, 1
+Style: Hook, Inter, 82, {accent}, {accent}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 5, 8, 8, 90, 90, 300, 1
+Style: Stat, Inter, 150, {accent}, {accent}, {black}, {black}, -1, 0, 0, 0, 100, 100, 0, 0, 1, 8, 6, 5, 80, 80, 0, 1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -39,7 +39,7 @@ def _t(seconds: float) -> str:
     return f"{h}:{m:02d}:{s:02d}.{c:02d}"
 
 
-def _chunk(words: list[Word], max_words: int = 4, max_chars: int = 26) -> list[list[Word]]:
+def _chunk(words: list[Word], max_words: int = 3, max_chars: int = 16) -> list[list[Word]]:
     chunks: list[list[Word]] = []
     cur: list[Word] = []
     for w in words:
