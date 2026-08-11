@@ -183,9 +183,9 @@ PEXELS_API_KEY = _env("PEXELS_API_KEY")
 EDGE_TTS_VOICE = _env("EDGE_TTS_VOICE", "en-US-AndrewNeural")
 REELS_DIR = DATA_DIR / "reels"
 MUSIC_DIR = BASE_DIR / "assets" / "music"
-# The daily reel's slot time, in TIMEZONE_TARGET (US Eastern) — used as the
-# idempotency key so a reel posts at most once per day.
-REEL_SLOT = (int(_env("REEL_SLOT_HOUR", "15")), int(_env("REEL_SLOT_MINUTE", "0")))
+# Reel slots per day, in TIMEZONE_TARGET (US Eastern). Reels are the discovery
+# engine, so we run two/day. Each slot is its own idempotency key.
+REEL_SLOTS = ((11, 0), (19, 0))
 REEL_MUSIC_VOLUME = float(_env("REEL_MUSIC_VOLUME", "0.12"))
 REEL_TARGET_SECONDS = float(_env("REEL_TARGET_SECONDS", "40"))
 

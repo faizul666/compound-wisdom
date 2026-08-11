@@ -2,7 +2,12 @@ name: Compound Wisdom — reel
 
 on:
   schedule:
-    - cron: "15 19 * * *"   # once a day; run_reel is idempotent per day
+    # Two reels/day (11:00 & 19:00 ET). run_reel makes the oldest due-unposted
+    # slot, one per run; these 4 spread times cover both slots in EST and EDT.
+    - cron: "20 15 * * *"   # ~ morning slot (EDT)
+    - cron: "20 17 * * *"   # ~ morning slot (EST) / catch-up
+    - cron: "20 23 * * *"   # ~ evening slot (EDT)
+    - cron: "20 1 * * *"    # ~ evening slot (EST) / catch-up
   workflow_dispatch:
     inputs:
       dry_run:

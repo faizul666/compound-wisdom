@@ -26,12 +26,19 @@ from db import init_db
 from lock import single_instance
 
 
-def _reel_slot_iso() -> str:
+def _due_reel_slots():
+    """Today's reel slots whose time has arrived, as (iso_utc, local), oldest first."""
     tz = pytz.timezone(config.TIMEZONE_TARGET)
-    now = datetime.now(tz)
-    h, m = config.REEL_SLOT
-    local = tz.localize(datetime(now.year, now.month, now.day, h, m))
-    return local.astimezone(pytz.utc).isoformat()
+    now_local = datetime.now(tz)
+    now_utc = datetime.now(pytz.utc)
+    out = []
+    for h, m in config.REEL_SLOTS:
+        local = tz.localize(datetime(now_local.year, now_local.month, now_local.day, h, m))
+        iso = local.astimezone(pytz.utc).isoformat()
+        if datetime.fromisoformat(iso) <= now_utc:
+            out.append((iso, local))
+    out.sort(key=lambda x: x[0])
+    return out
 
 
 def _pick_music() -> "object | None":
@@ -74,10 +81,12 @@ def main() -> int:
             log.info("another reel run is in progress; skipping.")
             return 0
 
-        slot_iso = _reel_slot_iso()
-        if store.reel_already_posted(slot_iso):
-            log.info("today's reel already posted; skipping.")
+        due = [(iso, loc) for iso, loc in _due_reel_slots() if not store.reel_already_posted(iso)]
+        if not due:
+            log.info("no due-and-unposted reel slot right now; skipping.")
             return 0
+        slot_iso, slot_local = due[0]  # oldest due slot, one per run
+        log.info("making reel for slot %s ET", slot_local.strftime("%I:%M %p"))
 
         from reels import assemble, broll, publish, script, voice
         from reels.script import GenerationError, TransientError
