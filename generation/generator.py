@@ -239,6 +239,8 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
     summary = brief.angle_summary.strip()
     fact = brief.supporting_facts[0].fact if brief.supporting_facts else ""
 
+    tags = ["selfimprovement", "booksummary", "mindset", "personalgrowth"]
+
     if brief.suggested_format == "quote":
         return QuotePost(
             quote_text=_FALLBACK_QUOTE[0],
@@ -249,12 +251,14 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
                 "The idea is simple: decide the system once, then let repetition do the work."
             ),
             closing_question="What's one system you set up once that still pays off today?",
+            hashtags=["jamesclear", "atomichabits", "habits", "selfimprovement"],
         )
 
     if brief.suggested_format == "mini_blog":
         return MiniBlogPost(
             headline=brief.angle_title.strip(),
             headline_image_template="editorial_serif",
+            caption_hook=summary[:120] or "One small, repeatable idea that compounds over time.",
             caption_body=(
                 f"{summary}\n\n{fact}\n\n"
                 "The useful part isn't the big insight — it's the small, repeatable "
@@ -262,6 +266,7 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
                 "That's how good ideas compound: quietly, undisturbed, for longer than feels exciting."
             ),
             closing_question="What's one idea from a book that actually changed how you act?",
+            hashtags=tags,
         )
 
     if brief.suggested_format == "book_summary":
@@ -272,25 +277,28 @@ def _fallback_generate(brief: ResearchBrief) -> PostPayload:
         return BookSummaryPost(
             book_title=title,
             book_author=author,
+            publication_year="2018",
             count=count,
-            headline=f"{count} lessons from {title}",
+            headline=f"{title}: {count} Lessons",
             book_image_template="cover_left",
+            caption_hook=(summary[:120] or f"The core ideas from {title}, in {count} lessons."),
             intro_line=summary or f"The core ideas from {title}, distilled.",
             lessons=lessons,
             closing_line="Pick one lesson and act on it today — that's how books actually change anything.",
+            hashtags=tags,
         )
 
     # list
     count = brief.suggested_list_count or 5
     items = [ListItem(name=n, explanation=d) for n, d in _FALLBACK_LIST_ITEMS[:count]]
     title = brief.angle_title.strip()
-    if not title[:2].strip().isdigit():
-        title = f"{count} {title}"
     return ListPost(
         title=title,
         count=count,  # type: ignore[arg-type]
         list_image_template="numbered_bold",
+        caption_hook=(summary[:120] or "A few ideas worth keeping — each small enough to use this week."),
         intro_line="A few ideas worth keeping — each one small enough to use this week.",
         items=items,
         closing_line="Boring, repeated, and undisturbed beats impressive and inconsistent.",
+        hashtags=tags,
     )

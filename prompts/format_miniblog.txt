@@ -2,18 +2,19 @@ FORMAT: MINI-BLOG POST
 
 Produce a MiniBlogPost object with these fields:
 
-- headline: 6-12 words, sentence case (not Title Case). A specific,
-  curiosity-opening headline that names a real idea. It is the only text on the
-  image, so it must stand alone. Often built around one book's key idea.
+- headline: 6-12 words, framed as a QUESTION or a CLAIM that matches how people
+  search — e.g. "Why Willpower Fails and Systems Don't" or "The Real Reason You
+  Can't Focus Anymore". It is the only text on the image, so it must stand alone.
 - headline_image_template: choose from bold_sans, editorial_serif, warm_serif,
   minimal_photo_overlay.
-- caption_body: 300-550 words. Structure: a strong hook (a scene, a surprising
-  claim, or a question), then 3-4 short body paragraphs that develop ONE idea
-  from a book or thinker, then a close the reader can act on. Name the book/
-  author. At least one concrete number, example, or scene. Vary sentence length;
-  one-sentence paragraphs welcome. Teach the idea — never push a product or
-  promise an outcome.
+- caption_hook: the caption's FIRST line and its most important. <=125 characters,
+  a searchable claim plus a concrete entity or number — never a soft intro.
+  e.g. "Cal Newport calls it deep work, and it's becoming the rarest skill there is."
+- caption_body: 300-550 words. A strong hook, then 3-4 short paragraphs developing
+  ONE idea from a book or thinker (name them), then a close the reader can act on.
+  At least one concrete number, example, or scene. Vary sentence length.
 - closing_question: one specific question answerable with a real personal story.
+- hashtags: 3-5 SPECIFIC long-tail tags without the # sign, e.g.
+  ["deepwork","calnewport","focus","productivity"].
 
-The mini-blog is the deepest post of the day — the most human, most useful.
-No AI-clichés, no listicle scaffolding, no "here's the thing." Let it breathe.
+US English only. Second person ("you"). No AI-clichés, no listicle scaffolding.

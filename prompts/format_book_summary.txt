@@ -2,24 +2,25 @@ FORMAT: BOOK SUMMARY (the flagship — the image shows the real book cover)
 
 Produce a BookSummaryPost object with these fields:
 
-- book_title: the EXACT title of the book (so its cover can be fetched). If the
-  brief names a book, use that book.
+- book_title: the EXACT title of the book (so its cover can be fetched).
 - book_author: the author's name.
+- publication_year: the book's publication year, e.g. "2018".
 - count: exactly 5 or 7 (how many lessons).
-- headline: e.g. "7 lessons from Atomic Habits" — the leading number MUST equal
-  count, and it must name the book. This is the only text on the image besides
-  the cover, so it must stand alone.
+- headline: the book TITLE first, then the count — e.g. "Atomic Habits: 7 Lessons"
+  or "The Psychology of Money: 7 Lessons". The title is the search term people
+  type, so it must come first. Only text on the image besides the cover.
 - book_image_template: choose from cover_left, cover_spotlight, cover_top.
-- intro_line: one or two sentences setting up why this book is worth your time.
+- caption_hook: the caption's FIRST line and its most important. <=125 characters,
+  a specific searchable claim that NAMES the book — never "Here are 7 lessons".
+  e.g. "Atomic Habits sold 20 million copies. These 7 ideas are why."
+- intro_line: one or two sentences on why this book is worth the read.
 - lessons: exactly `count` items. Each has:
-    - lesson: the takeaway as a short, punchy phrase (not a full sentence).
-    - detail: 1-2 sentences making it concrete — a number, an example, or a
-      sharp distinction. This is where the value lives.
-- closing_line: one line that ties it together — often the single most important
-  idea from the book, or a nudge to apply one lesson today.
+    - lesson: the takeaway as a short, punchy phrase.
+    - detail: 1-2 sentences making it concrete (a number, an example, a distinction).
+- closing_line: one line that ties it together or the single most important idea.
+- hashtags: 3-5 SPECIFIC long-tail tags without the # sign — include the book,
+  author, and topic, e.g. ["atomichabits","jamesclear","habitstacking","booksummary"].
 
 Rules:
-- The lessons must genuinely reflect the book's real content — this is a summary,
-  not a generic listicle. Do not invent claims the book doesn't make.
-- No fabricated quotes. You may reference the author's ideas in your own words.
-- Keep it useful and specific. Every lesson should be worth screenshotting.
+- Lessons must reflect the book's real content; do not invent claims.
+- No fabricated quotes. US English only.

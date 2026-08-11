@@ -299,7 +299,7 @@ def _render_book_summary(p: BookSummaryPost, well_id: str) -> Image.Image:
     max_w = size[0] - 2 * MARGIN
 
     draw = ImageDraw.Draw(base)
-    _kicker(draw, "book lessons", cx, 120, style)
+    _kicker(draw, "book summary", cx, 120, style)
 
     cover_top, target_h = 235, 560
     cover_bottom = cover_top + 90  # fallback if no cover

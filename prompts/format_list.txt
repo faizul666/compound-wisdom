@@ -2,19 +2,23 @@ FORMAT: LIST POST
 
 Produce a ListPost object with these fields:
 
-- title: a specific, useful title. The leading number MUST equal count.
-  "7 mental models that make hard decisions easy" beats "7 thinking tips".
+- title: lead with the TOPIC NOUN (the search term), number second — e.g.
+  "Mental Models: 7 That Change How You Decide" or "Money Habits: 5 That Actually
+  Compound". Not "7 mental models...". The image also shows the number as a badge.
 - count: exactly 5, 7, or 10. Match the suggested_list_count from the brief if given.
 - list_image_template: choose from numbered_bold, serif_list_card,
   warm_gradient_list, minimal_dark.
+- caption_hook: the caption's FIRST line. <=125 characters, a searchable claim
+  that names the topic — never "Here are 7...". e.g. "Most bad decisions come from
+  missing one of these 7 mental models."
 - intro_line: one or two sentences framing the list.
 - items: exactly `count` ListItem objects. Each has:
-    - name: the idea/habit/model as a short punchy phrase (not a full sentence).
-    - explanation: 1-2 sentences. Concrete and specific — a number, an example,
-      or a sharp distinction. Where relevant, tie it to a book or thinker.
-  Items should not overlap; each earns its place. Order them with a rhythm.
-- closing_line: one line that ties the list together — a reframe or the single
-  most important item. Not a sales pitch or a promise.
+    - name: the idea/habit/model as a short punchy phrase.
+    - explanation: 1-2 sentences, concrete and specific; tie to a book or thinker
+      where relevant.
+- closing_line: one line that ties the list together — a reframe or the key item.
+- hashtags: 3-5 SPECIFIC long-tail tags without the # sign, e.g.
+  ["mentalmodels","decisionmaking","charliemunger","clearthinking"].
 
-Keep every item useful and screenshot-worthy. No get-rich-quick angles, no
-specific investment advice.
+Keep every item useful and screenshot-worthy. US English only. No get-rich-quick
+angles, no specific investment advice.

@@ -32,13 +32,16 @@ class QuotePost(BaseModel):
     image_background_template: QuoteTemplate
     caption_body: str = Field(description="150-320 words expanding on the idea")
     closing_question: str
+    hashtags: list[str] = Field(description="3-5 specific long-tail hashtags WITHOUT the # (e.g. jamesclear, atomichabits, moneymindset)")
 
 
 class MiniBlogPost(BaseModel):
-    headline: str = Field(description="6-12 words, sentence case")
+    headline: str = Field(description="6-12 words, framed as a question or a claim that matches how people search, e.g. 'Why Willpower Fails and Systems Don't'")
     headline_image_template: MiniBlogTemplate
+    caption_hook: str = Field(description="the caption's first line (<=125 chars): a searchable claim + a concrete entity/number, NOT a soft intro")
     caption_body: str = Field(description="300-600 words, hook + 3-4 paragraphs + close")
     closing_question: str
+    hashtags: list[str] = Field(description="3-5 specific long-tail hashtags WITHOUT the # (e.g. deepwork, focus, productivity)")
 
 
 class ListItem(BaseModel):
@@ -47,15 +50,17 @@ class ListItem(BaseModel):
 
 
 class ListPost(BaseModel):
-    title: str
+    title: str = Field(description="topic noun FIRST, number second, e.g. 'Mental Models: 7 That Change How You Decide' (front-load the searchable term, not the number)")
     # Plain int, not Literal[5, 10]: Gemini's response_schema only supports
     # string enums, so an int Literal breaks schema construction. The
     # "exactly 5 or 10" rule is enforced in the generator's _post_validate.
     count: int = Field(description="exactly 5, 7, or 10")
     list_image_template: ListTemplate
+    caption_hook: str = Field(description="the caption's first line (<=125 chars): a searchable claim naming the topic, NOT 'Here are 7...'")
     intro_line: str
     items: list[ListItem]
     closing_line: str
+    hashtags: list[str] = Field(description="3-5 specific long-tail hashtags WITHOUT the # (e.g. mentalmodels, decisionmaking, munger)")
 
 
 class BookLesson(BaseModel):
@@ -66,12 +71,15 @@ class BookLesson(BaseModel):
 class BookSummaryPost(BaseModel):
     book_title: str = Field(description="exact book title, so its cover can be fetched")
     book_author: str = Field(description="the author's name")
+    publication_year: str = Field(description="the book's publication year, e.g. '2018'")
     count: int = Field(description="number of lessons, exactly 5 or 7")
-    headline: str = Field(description="e.g. '7 lessons from Atomic Habits'; leading number must equal count")
+    headline: str = Field(description="book TITLE first, then the count, e.g. 'Atomic Habits: 7 Lessons' (the title is the search term)")
     book_image_template: BookTemplate
+    caption_hook: str = Field(description="the caption's first line (<=125 chars): a searchable claim naming the book, e.g. 'Atomic Habits sold 20M copies. These 7 ideas are why.'")
     intro_line: str
     lessons: list["BookLesson"]
     closing_line: str
+    hashtags: list[str] = Field(description="3-5 specific long-tail hashtags WITHOUT the # (e.g. atomichabits, jamesclear, habitstacking, booksummary)")
 
 
 class ReelScript(BaseModel):

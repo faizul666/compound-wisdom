@@ -2,35 +2,41 @@
   {
     "book_title": "Atomic Habits",
     "book_author": "James Clear",
+    "publication_year": "2018",
     "count": 5,
-    "headline": "5 lessons from Atomic Habits",
+    "headline": "Atomic Habits: 5 Lessons",
     "book_image_template": "cover_left",
-    "intro_line": "James Clear's Atomic Habits sold millions of copies for one reason: it makes change feel small enough to actually do.",
+    "caption_hook": "Atomic Habits sold over 15 million copies. These 5 ideas are why.",
+    "intro_line": "James Clear's Atomic Habits works because it makes change small enough to actually do.",
     "lessons": [
-      {"lesson": "Systems beat goals", "detail": "Goals set direction, but you fall to the level of your systems. Design the routine, not just the target."},
+      {"lesson": "Systems beat goals", "detail": "You fall to the level of your systems, not the height of your goals. Design the routine, not just the target."},
       {"lesson": "Aim for 1% better", "detail": "Tiny gains feel invisible day to day, but 1% better every day is roughly 37x better over a year."},
       {"lesson": "Make it obvious and easy", "detail": "Most habits fail on friction, not willpower. Put the running shoes by the door; delete the app from the home screen."},
-      {"lesson": "Change your identity, not just your behavior", "detail": "Don't aim to 'run a marathon.' Aim to 'become a runner.' Every action is a vote for the person you're becoming."},
-      {"lesson": "Never miss twice", "detail": "One missed day is an accident. Two is the start of a new pattern. The rule that protects a habit is bouncing back fast."}
+      {"lesson": "Change your identity, not just your behavior", "detail": "Don't aim to run a marathon. Aim to become a runner. Every action is a vote for who you're becoming."},
+      {"lesson": "Never miss twice", "detail": "One missed day is an accident. Two is the start of a new pattern. Bouncing back fast is what protects a habit."}
     ],
-    "closing_line": "You don't need a bigger goal. You need a smaller, more obvious first step you can repeat tomorrow."
+    "closing_line": "You don't need a bigger goal. You need a smaller, more obvious first step you can repeat tomorrow.",
+    "hashtags": ["atomichabits", "jamesclear", "habitstacking", "booksummary", "selfimprovement"]
   },
   {
     "book_title": "The Psychology of Money",
     "book_author": "Morgan Housel",
+    "publication_year": "2020",
     "count": 7,
-    "headline": "7 lessons from The Psychology of Money",
+    "headline": "The Psychology of Money: 7 Lessons",
     "book_image_template": "cover_spotlight",
-    "intro_line": "Morgan Housel's central claim: doing well with money has little to do with how smart you are, and everything to do with how you behave.",
+    "caption_hook": "Doing well with money has little to do with how smart you are. Morgan Housel proved it.",
+    "intro_line": "The Psychology of Money argues that behavior, not intelligence, decides how you do with money.",
     "lessons": [
       {"lesson": "Wealth is what you don't see", "detail": "Real wealth is income not spent. The visible stuff — cars, watches — is money leaving, not money kept."},
       {"lesson": "Enough is a superpower", "detail": "The hardest financial skill is stopping the goalposts from moving. Knowing when you have enough beats always wanting more."},
-      {"lesson": "Room for error is the point", "detail": "Plans fail. The people who survive leave margin — savings, slack, low fixed costs — so a bad year doesn't end the game."},
+      {"lesson": "Room for error is the point", "detail": "Plans fail. Survivors leave margin — savings, slack, low fixed costs — so a bad year doesn't end the game."},
       {"lesson": "Time is the real engine", "detail": "Compounding rewards patience over brilliance. The longest runway usually beats the highest return."},
       {"lesson": "Luck and risk are siblings", "detail": "Not every outcome is earned. Judge decisions by the process, not just the result."},
-      {"lesson": "Saving needs no reason", "detail": "You don't need a specific goal to save. Savings buys options and control over your time — which is the highest dividend money pays."},
-      {"lesson": "Nobody is crazy", "detail": "People's money choices make sense given their own history and fears. Understanding that makes you calmer with your own."}
+      {"lesson": "Saving needs no reason", "detail": "You don't need a specific goal to save. Savings buys options and control over your time."},
+      {"lesson": "Nobody is crazy", "detail": "People's money choices make sense given their own history and fears. Seeing that makes you calmer with your own."}
     ],
-    "closing_line": "The goal isn't to be the smartest person with money. It's to be reasonable, patient, and hard to knock out of the game."
+    "closing_line": "The goal isn't to be the smartest person with money. It's to be reasonable, patient, and hard to knock out of the game.",
+    "hashtags": ["psychologyofmoney", "morganhousel", "moneymindset", "personalfinance", "booksummary"]
   }
 ]

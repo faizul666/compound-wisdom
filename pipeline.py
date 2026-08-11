@@ -74,9 +74,10 @@ def run_slot(format_type: str, scheduled_at_iso: str) -> SlotResult:
 
     brief_id, payload, well_id = chosen
 
-    # render + caption
+    # render + caption + alt text
     image_path = composer.render(payload, well_id)
     caption = captions.build(payload)
+    alt = captions.alt_text(payload)
 
     # record as ready, then publish
     post_id = store.insert_post(
@@ -89,7 +90,7 @@ def run_slot(format_type: str, scheduled_at_iso: str) -> SlotResult:
 
     try:
         from publishing import publisher
-        fb_id = publisher.publish(image_path, caption)
+        fb_id = publisher.publish(image_path, caption, alt_text=alt)
     except Exception as e:
         store.mark_post_failed(post_id, str(e))
         log.warning("publish failed for post %s: %s", post_id, e)  # run_due emits the ERROR/alert

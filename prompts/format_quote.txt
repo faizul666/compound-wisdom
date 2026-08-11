@@ -2,19 +2,20 @@ FORMAT: QUOTE POST
 
 Produce a QuotePost object with these fields:
 
-- quote_text: a REAL, verifiable quote (8-30 words) from a book or a well-known
-  author/thinker in the self-improvement, business, psychology, or money space.
-  It must be something the person actually wrote or said. No quotation marks
-  inside the field — just the words. If you cannot be confident a quote is
-  verbatim, DO NOT invent one; pick a different, well-known quote you are sure of.
-- attribution: the real author and source, formatted like
-  "— James Clear, Atomic Habits" or "— Charlie Munger". Always start with "— ".
-- image_background_template: choose the mood that fits, from: warm_gradient,
-  parchment, minimal_photo, branded_solid, serif_card.
-- caption_body: 150-320 words. Open with a concrete scene or a sharp
-  observation, unpack why the quote is true (with an example or number), and
-  land on something the reader can use. Reference the author/book naturally.
-- closing_question: one specific question a reader could answer with a real
-  personal story. Not "what do you think?".
+- quote_text: a REAL, verifiable quote (8-30 words) from a book or well-known
+  author/thinker in self-improvement, business, psychology, or money. It must be
+  something the person actually wrote or said. No quotation marks inside the field.
+  If you cannot be confident a quote is verbatim, pick a different one you are sure of.
+- attribution: the real author and source, like "— James Clear, Atomic Habits" or
+  "— Charlie Munger". Always start with "— ". (This becomes literal caption text,
+  so it doubles as a searchable entity signal.)
+- image_background_template: warm_gradient, parchment, minimal_photo, branded_solid,
+  or serif_card.
+- caption_body: 150-320 words. Open with a concrete scene or sharp observation,
+  unpack why the quote is true (with an example or number), and land on something
+  usable. Reference the author/book naturally.
+- closing_question: one specific question answerable with a real personal story.
+- hashtags: 3-5 SPECIFIC long-tail tags without the # sign — include the author and
+  topic, e.g. ["jamesclear","atomichabits","habits","selfimprovement"].
 
-Match the voice: clear, punchy, useful. Vary sentence length.
+US English only. Clear, punchy, useful. Vary sentence length.

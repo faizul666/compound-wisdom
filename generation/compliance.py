@@ -67,6 +67,20 @@ _OUTCOME_PATTERNS = [
     re.compile(r"\b(?:double|triple|10x|grow)\s+your\s+money\b", re.I),
     re.compile(r"\bguarantee(?:d|s)?\b", re.I),
 ]
+# ESL / non-US-English tells (check 7) — these mark content as non-US and hurt
+# the account's brand-cluster signal, so a hit forces a regeneration.
+_ESL_PATTERNS = [
+    re.compile(r"\bkindly\b", re.I),
+    re.compile(r"\bdo the needful\b", re.I),
+    re.compile(r"\brevert back\b", re.I),
+    re.compile(r"\bas per\b", re.I),
+    re.compile(r"\bdiscuss about\b", re.I),
+    re.compile(r"\bin spite of\b", re.I),
+    re.compile(r"\bN number of\b", re.I),
+    re.compile(r"\bsame to you\b", re.I),
+    re.compile(r"\bprepone\b", re.I),
+    re.compile(r"\bupgradation\b", re.I),
+]
 
 
 def regex_prefilter(text: str) -> list[str]:
@@ -88,6 +102,10 @@ def regex_prefilter(text: str) -> list[str]:
     for pat in _OUTCOME_PATTERNS:
         if pat.search(text):
             failed.add("2")
+
+    for pat in _ESL_PATTERNS:
+        if pat.search(text):
+            failed.add("7")
 
     return sorted(failed)
 

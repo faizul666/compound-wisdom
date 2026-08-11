@@ -1,32 +1,36 @@
 [
   {
-    "title": "7 mental models that make hard decisions easier",
+    "title": "Mental Models: 7 That Make Hard Decisions Easier",
     "count": 7,
     "list_image_template": "numbered_bold",
+    "caption_hook": "Most bad decisions come from missing one of these 7 mental models.",
     "intro_line": "A mental model is just a reliable way of seeing a problem. Collect enough of them and fewer decisions feel hard.",
     "items": [
-      {"name": "Inversion", "explanation":"Instead of asking how to succeed, ask how to fail — then avoid that. Charlie Munger built a fortune mostly by not being stupid."},
-      {"name": "Opportunity cost", "explanation":"Every yes is a no to everything else you could do with that time or money. The real cost of a choice is the best thing you gave up."},
-      {"name": "Second-order thinking", "explanation":"Ask 'and then what?' A cheap decision today can be expensive in six months. Play the tape forward."},
-      {"name": "Circle of competence", "explanation":"Know the edge of what you actually understand, and be honest about it. Most big mistakes happen just outside that line."},
-      {"name": "Occam's razor", "explanation":"When explanations compete, the simplest that fits is usually right. Complexity is often a place to hide."},
-      {"name": "Margin of safety", "explanation":"Leave room for being wrong. Build the bridge to hold more than the heaviest truck you expect."},
-      {"name": "Confirmation bias", "explanation":"You find what you look for. Actively hunt for the evidence you'd rather not see before you commit."}
+      {"name": "Inversion", "explanation": "Instead of asking how to succeed, ask how to fail — then avoid that. Charlie Munger built a fortune mostly by not being stupid."},
+      {"name": "Opportunity cost", "explanation": "Every yes is a no to everything else you could do with that time or money. The real cost of a choice is the best thing you gave up."},
+      {"name": "Second-order thinking", "explanation": "Ask 'and then what?' A cheap decision today can be expensive in six months. Play the tape forward."},
+      {"name": "Circle of competence", "explanation": "Know the edge of what you actually understand, and be honest about it. Most big mistakes happen just outside that line."},
+      {"name": "Occam's razor", "explanation": "When explanations compete, the simplest that fits is usually right. Complexity is often a place to hide."},
+      {"name": "Margin of safety", "explanation": "Leave room for being wrong. Build the bridge to hold more than the heaviest truck you expect."},
+      {"name": "Confirmation bias", "explanation": "You find what you look for. Actively hunt for the evidence you'd rather not see before you commit."}
     ],
-    "closing_line": "You don't need to be smarter than everyone. You just need a few good models and the discipline to actually use them."
+    "closing_line": "You don't need to be smarter than everyone. You just need a few good models and the discipline to use them.",
+    "hashtags": ["mentalmodels", "decisionmaking", "charliemunger", "clearthinking", "criticalthinking"]
   },
   {
-    "title": "5 habits that quietly compound over a decade",
+    "title": "Money Habits: 5 That Quietly Compound",
     "count": 5,
     "list_image_template": "serif_list_card",
+    "caption_hook": "The people who feel calm about money almost all share these 5 habits.",
     "intro_line": "None of these change your week. All of them change your decade.",
     "items": [
-      {"name": "Read 20 pages a day", "explanation":"That's about 20-30 books a year. In ten years you've read more than most people do in a lifetime."},
-      {"name": "Automate one good decision", "explanation":"Save before you see the paycheck; lay tomorrow's clothes out tonight. Willpower is fragile; defaults aren't."},
-      {"name": "Walk every day", "explanation":"Not a workout — a walk. It's the most underrated tool for thinking clearly and staying steady."},
-      {"name": "Write things down", "explanation":"A short daily note turns a vague life into a reviewable one. What gets tracked gets understood."},
-      {"name": "Sleep like it's your job", "explanation":"Almost every skill you care about — focus, patience, memory, mood — is downstream of rest."}
+      {"name": "Automate one good decision", "explanation": "Save before you see the paycheck. Willpower is fragile; defaults aren't."},
+      {"name": "Wait 24 hours on big buys", "explanation": "Most impulse purchases fade within a day. A short pause does the filtering for free."},
+      {"name": "Keep a working car longer", "explanation": "The gap between a paid-off car and a new payment is small in a month and enormous over a decade."},
+      {"name": "Review subscriptions quarterly", "explanation": "A 15-minute review four times a year quietly returns more than most people earn on the side."},
+      {"name": "Track net worth, not daily prices", "explanation": "Checking the slope every quarter beats checking the noise every day."}
     ],
-    "closing_line": "Boring, repeated, and undisturbed beats impressive and inconsistent. Pick one and start tonight."
+    "closing_line": "Boring, repeated, and undisturbed beats impressive and inconsistent. Pick one and start this week.",
+    "hashtags": ["moneyhabits", "personalfinance", "moneymindset", "financialwellness", "savingmoney"]
   }
 ]
