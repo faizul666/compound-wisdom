@@ -106,8 +106,12 @@ def _call(prompt: str, use_grounding: bool) -> str:
     return text
 
 
-def generate(theme: str | None = None) -> tuple[str, ReelScript]:
-    """Generate a reel script for a theme (a well). Returns (theme, ReelScript)."""
+def generate(theme: str | None = None, avoid_hooks: list[str] | None = None) -> tuple[str, ReelScript]:
+    """Generate a reel script for a theme (a well). Returns (theme, ReelScript).
+
+    avoid_hooks are recently-used reel hooks; the model is told to pick a
+    genuinely different idea so reels don't repeat across days.
+    """
     config.require("GEMINI_API_KEY")
     if theme is None:
         # Reels are book-agnostic, so exclude the book_lessons well.
@@ -115,10 +119,13 @@ def generate(theme: str | None = None) -> tuple[str, ReelScript]:
         theme = random.choice(reel_wells)
     theme_desc = config.WELLS.get(theme, theme)
 
+    avoid = "\n".join(f"- {h}" for h in (avoid_hooks or [])[:40]) or "(none yet)"
     prompt = (
         f"Write ONE value reel in the theme of {theme} ({theme_desc}). "
         "Pick a single specific, surprising idea and find a REAL study or thinker "
-        "with a name, number, and year to anchor it. Follow the five-beat structure."
+        "with a name, number, and year to anchor it. Follow the five-beat structure.\n\n"
+        "Do NOT repeat, reuse, or paraphrase any of these recently-used reel ideas — "
+        "choose a genuinely different idea AND a different study/thinker:\n" + avoid
     )
 
     want_grounding = config.RESEARCH_USE_GROUNDING

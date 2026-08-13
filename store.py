@@ -159,12 +159,34 @@ def reel_already_posted(scheduled_at_iso: str) -> bool:
     return row is not None
 
 
-def record_reel(scheduled_at_iso: str, theme: str, video_path: str, fb_video_id: str) -> None:
+def record_reel(scheduled_at_iso: str, theme: str, hook: str, video_path: str, fb_video_id: str) -> None:
     now = utc_now_iso()
     with get_conn() as conn:
         conn.execute(
             """INSERT OR REPLACE INTO reels
-               (scheduled_at, theme, video_path, fb_video_id, status, created_at, posted_at)
-               VALUES (?,?,?,?, 'posted', ?, ?)""",
-            (scheduled_at_iso, theme, video_path, fb_video_id, now, now),
+               (scheduled_at, theme, hook, video_path, fb_video_id, status, created_at, posted_at)
+               VALUES (?,?,?,?,?, 'posted', ?, ?)""",
+            (scheduled_at_iso, theme, hook, video_path, fb_video_id, now, now),
         )
+
+
+def recent_reel_hooks(days: int = 30) -> list[str]:
+    """Hooks of reels made in the last `days` — passed to the model to avoid repeats."""
+    from datetime import datetime, timedelta, timezone
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT hook FROM reels WHERE created_at >= ? AND hook IS NOT NULL ORDER BY created_at DESC",
+            (cutoff,),
+        ).fetchall()
+    return [r["hook"] for r in rows if r["hook"]]
+
+
+def recent_reel_themes(limit: int = 3) -> list[str]:
+    """The most recently used reel themes (to rotate away from them)."""
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT theme FROM reels WHERE theme IS NOT NULL ORDER BY created_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+    return [r["theme"] for r in rows if r["theme"]]

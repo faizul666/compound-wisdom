@@ -91,15 +91,23 @@ def main() -> int:
         from reels import assemble, broll, publish, script, voice
         from reels.script import GenerationError, TransientError
 
+        # Rotate away from recently-used themes, and tell the model the recent
+        # hooks so it doesn't repeat an idea days later.
+        recent_themes = store.recent_reel_themes(3)
+        reel_wells = [w for w in config.WELLS if w != "book_lessons"]
+        choices = [w for w in reel_wells if w not in recent_themes[:2]] or reel_wells
+        chosen_theme = random.choice(choices)
+        avoid_hooks = store.recent_reel_hooks(30)
+
         try:
-            theme, spec = script.generate()
+            theme, spec = script.generate(theme=chosen_theme, avoid_hooks=avoid_hooks)
         except TransientError as e:
             log.warning("transient error generating reel script; will retry next run: %s", e)
             return 0
         except GenerationError as e:
             log.error("reel script generation failed: %s", e)
             return 1
-        log.info("reel theme=%s hook=%r", theme, spec.hook_text)
+        log.info("reel theme=%s hook=%r (avoiding %d recent)", theme, spec.hook_text, len(avoid_hooks))
 
         reel_dir = config.REELS_DIR
         clips_dir = reel_dir / "clips"
@@ -138,7 +146,7 @@ def main() -> int:
             log.error("reel publish failed: %s", e)
             return 1
 
-        store.record_reel(slot_iso, theme, str(out), fb_id)
+        store.record_reel(slot_iso, theme, spec.hook_text, str(out), fb_id)
         if not args.keep:
             shutil.rmtree(clips_dir, ignore_errors=True)
         log.info("reel done -> %s", fb_id)

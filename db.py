@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS reels (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     scheduled_at TIMESTAMP NOT NULL,
     theme TEXT,
+    hook TEXT,
     video_path TEXT,
     fb_video_id TEXT,
     status TEXT NOT NULL DEFAULT 'posted',
@@ -107,6 +108,10 @@ def init_db() -> None:
     """Create all tables and indexes if they do not already exist."""
     with get_conn() as conn:
         conn.executescript(SCHEMA)
+        # Migration: add reels.hook to already-created DBs.
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(reels)")}
+        if "hook" not in cols:
+            conn.execute("ALTER TABLE reels ADD COLUMN hook TEXT")
 
 
 if __name__ == "__main__":
