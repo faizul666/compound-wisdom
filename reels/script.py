@@ -8,6 +8,7 @@ the underlying researcher/thinker is encouraged.
 """
 from __future__ import annotations
 
+import logging
 import random
 import time
 
@@ -21,6 +22,8 @@ from generation.generator import (
 )
 from research.researcher import _extract_json
 from schemas import ReelScript
+
+log = logging.getLogger("calm_money.reels.script")
 
 REEL_SYSTEM = """You write short vertical video scripts (Reels) for a broad
 self-improvement audience. Each reel delivers ONE genuinely useful, surprising
@@ -128,19 +131,55 @@ def generate(theme: str | None = None, avoid_hooks: list[str] | None = None) -> 
         "choose a genuinely different idea AND a different study/thinker:\n" + avoid
     )
 
-    want_grounding = config.RESEARCH_USE_GROUNDING
-    try:
-        text = _call(prompt, want_grounding)
-    except TransientError:
-        raise
-    except Exception:
-        if want_grounding:
-            text = _call(prompt, False)  # ungrounded fallback
-        else:
+    # Try grounded first (real citations). If the grounded call fails OR returns
+    # malformed JSON, fall back to a structured (response_schema) ungrounded call,
+    # which is guaranteed to be valid JSON. TransientError still propagates.
+    script = None
+    if config.RESEARCH_USE_GROUNDING:
+        try:
+            script = _parse_reel(_call(prompt, use_grounding=True))
+        except TransientError:
             raise
+        except Exception as e:
+            log.warning("grounded reel generation failed (%s); using structured fallback", e)
+    if script is None:
+        script = _call_structured(prompt)
 
-    data = _extract_json(text)
-    script = ReelScript.model_validate(data)
     if len((script.mechanism + " " + script.hook_claim).split()) < 15:
         raise GenerationError("reel script: too thin")
     return theme, script
+
+
+def _parse_reel(text: str) -> ReelScript:
+    return ReelScript.model_validate(_extract_json(text))
+
+
+def _call_structured(prompt: str) -> ReelScript:
+    """Ungrounded call with response_schema — guaranteed valid ReelScript JSON."""
+    from google.genai import types
+
+    cfg = types.GenerateContentConfig(
+        system_instruction=_system_instruction(), temperature=0.9,
+        max_output_tokens=2048, response_mime_type="application/json",
+        response_schema=ReelScript,
+    )
+    resp = None
+    for attempt in range(1, GENERATION_RETRIES + 1):
+        try:
+            resp = _client().models.generate_content(
+                model=config.MODEL_FLASH, contents=prompt, config=cfg)
+            break
+        except Exception as e:
+            if _is_transient(str(e)):
+                if attempt < GENERATION_RETRIES:
+                    time.sleep(2 ** attempt)
+                    continue
+                raise TransientError(f"reel structured transient error: {e}") from e
+            raise GenerationError(f"reel structured generation failed: {e}") from e
+    parsed = getattr(resp, "parsed", None)
+    if isinstance(parsed, ReelScript):
+        return parsed
+    text = (getattr(resp, "text", None) or "").strip()
+    if not text:
+        raise GenerationError("reel structured: empty response")
+    return ReelScript.model_validate_json(text)
