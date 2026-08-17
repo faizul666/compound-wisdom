@@ -132,6 +132,51 @@ def _extract_json(text: str) -> dict:
         raise ResearchError(f"could not parse JSON from research output: {e}") from e
 
 
+def _salvage_briefs(text: str) -> list[dict]:
+    """Recover complete brief objects when the whole JSON won't parse.
+
+    The grounded model occasionally emits one malformed object (a missing comma,
+    an unescaped quote) that breaks json.loads for the entire batch. This scans
+    the briefs array with brace matching (string-aware) and keeps every top-level
+    object that parses on its own, dropping only the broken one(s).
+    """
+    idx = text.find('"briefs"')
+    start = text.find("[", idx if idx != -1 else 0)
+    if start == -1:
+        return []
+    objs: list[dict] = []
+    depth = 0
+    in_str = esc = False
+    obj_start = None
+    for j in range(start, len(text)):
+        ch = text[j]
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch == "{":
+            if depth == 0:
+                obj_start = j
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start is not None:
+                try:
+                    objs.append(json.loads(text[obj_start:j + 1]))
+                except json.JSONDecodeError:
+                    pass
+                obj_start = None
+        elif ch == "]" and depth == 0:
+            break
+    return objs
+
+
 def generate_briefs(n: int | None = None) -> list[ResearchBrief]:
     """Call Gemini and return validated, de-duplicated briefs (not yet stored)."""
     n = n or config.RESEARCH_BRIEFS_PER_RUN
@@ -148,10 +193,15 @@ def generate_briefs(n: int | None = None) -> list[ResearchBrief]:
         else:
             raise
 
-    data = _extract_json(text)
-    raw_briefs = data.get("briefs", []) if isinstance(data, dict) else []
+    try:
+        data = _extract_json(text)
+        raw_briefs = data.get("briefs", []) if isinstance(data, dict) else []
+    except ResearchError:
+        raw_briefs = _salvage_briefs(text)
+        if raw_briefs:
+            log.warning("research JSON malformed; salvaged %d complete brief(s)", len(raw_briefs))
     if not raw_briefs:
-        raise ResearchError("research output had no 'briefs' array")
+        raise ResearchError("research output had no parseable briefs")
 
     # Validate each brief independently — keep the good ones, drop malformed
     # ones (e.g. an invented well_id) rather than failing the whole batch.
