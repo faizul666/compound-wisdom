@@ -95,7 +95,7 @@ class ReelScript(BaseModel):
     source_note: str = Field(description="the citation for the caption, e.g. 'Lally, University College London, 2009'")
     broll_keywords: list[str] = Field(description="5-8 CONCRETE visual nouns that literally illustrate the claim/numbers (e.g. 'calendar pages flipping', 'stack of coins'); NO cliches")
     caption: str = Field(description="the Facebook caption: hook line + the specific stat + a soft CTA like 'Save this.'")
-    hashtags: list[str] = Field(description="6-10 broad self-improvement hashtags, without the # sign")
+    hashtags: list[str] = Field(description="exactly 5 broad self-improvement hashtags, without the # sign")
 
     def beats(self) -> list[str]:
         return [self.hook_claim, self.evidence, self.mechanism, self.action, self.question]

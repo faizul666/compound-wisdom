@@ -1,53 +1,62 @@
 """Facebook caption + alt-text for each static post format.
 
-Since July 2025 Facebook captions and custom alt text are indexed by Google, so
-these are written search-first: line 1 is a searchable claim + entity (before the
-~125-char "See more" cut), the body carries the value, and a metadata line +
-per-post hashtags give crawlers and AI answer engines clean entity signals.
-
-The image carries only headline-level text; the numbered items/lessons live here.
-alt_text() returns the entity-rich sentence for the photo's alt_text_custom.
+Written search-first (line 1 is a searchable claim + entity, before the ~125-char
+"See more" cut) AND mobile-readable: every block — hook, intro, each numbered
+item, close, metadata — is separated by a blank line so nothing reads as a wall
+of text on a phone. Captions and custom alt text are Google-indexed since July
+2025, so both carry entity signals.
 """
 from __future__ import annotations
 
+import re
 from typing import Union
 
 from schemas import BookSummaryPost, ListPost, MiniBlogPost, QuotePost
 
 PostPayload = Union[QuotePost, MiniBlogPost, ListPost, BookSummaryPost]
+MAX_TAGS = 5
 
 
 def _tags(hashtags: list[str]) -> str:
     seen, out = set(), []
     for h in hashtags:
         t = "#" + h.strip().lstrip("#").replace(" ", "")
-        if t.lower() not in seen and len(t) > 1:
+        if len(t) > 1 and t.lower() not in seen:
             seen.add(t.lower())
             out.append(t)
+        if len(out) >= MAX_TAGS:
+            break
     return " ".join(out)
 
 
+def _paras(text: str) -> list[str]:
+    """Split body prose into paragraphs (on blank lines), trimmed."""
+    return [p.strip() for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
+
+
 def build(payload: PostPayload) -> str:
+    """Assemble the caption. Every block is joined by a blank line."""
     if isinstance(payload, BookSummaryPost):
-        lines = [payload.caption_hook, "", payload.intro_line, ""]
-        for i, lesson in enumerate(payload.lessons, 1):
-            lines.append(f"{i}. {lesson.lesson} — {lesson.detail}")
-        lines += ["", payload.closing_line, "",
-                  f"\U0001F4D6 {payload.book_title} by {payload.book_author} ({payload.publication_year})"]
-        body = "\n".join(lines)
+        blocks = [payload.caption_hook, payload.intro_line]
+        blocks += [f"{i}. {l.lesson} — {l.detail}" for i, l in enumerate(payload.lessons, 1)]
+        blocks += [payload.closing_line,
+                   f"\U0001F4D6 {payload.book_title} by {payload.book_author} ({payload.publication_year})"]
     elif isinstance(payload, ListPost):
-        lines = [payload.caption_hook, "", payload.intro_line, ""]
-        for i, item in enumerate(payload.items, 1):
-            lines.append(f"{i}. {item.name} — {item.explanation}")
-        lines += ["", payload.closing_line]
-        body = "\n".join(lines)
+        blocks = [payload.caption_hook, payload.intro_line]
+        blocks += [f"{i}. {item.name} — {item.explanation}" for i, item in enumerate(payload.items, 1)]
+        blocks += [payload.closing_line]
     elif isinstance(payload, QuotePost):
-        body = f"“{payload.quote_text}”\n{payload.attribution}\n\n{payload.caption_body}\n\n{payload.closing_question}"
+        blocks = [f"“{payload.quote_text}”\n{payload.attribution}"]
+        blocks += _paras(payload.caption_body)
+        blocks += [payload.closing_question]
     elif isinstance(payload, MiniBlogPost):
-        body = f"{payload.caption_hook}\n\n{payload.caption_body}\n\n{payload.closing_question}"
+        blocks = [payload.caption_hook]
+        blocks += _paras(payload.caption_body)
+        blocks += [payload.closing_question]
     else:
         raise TypeError(f"Unknown payload type: {type(payload)!r}")
 
+    body = "\n\n".join(b for b in blocks if b and b.strip())
     return f"{body}\n\n{_tags(payload.hashtags)}"
 
 

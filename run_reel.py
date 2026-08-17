@@ -62,7 +62,7 @@ def _clean_keywords(kws: list[str]) -> list[str]:
 
 
 def _caption(script) -> str:
-    tags = " ".join("#" + h.lstrip("#") for h in script.hashtags)
+    tags = " ".join("#" + h.strip().lstrip("#").replace(" ", "") for h in script.hashtags[:5])
     src = f"\n\nSource: {script.source_note}" if getattr(script, "source_note", "") else ""
     return f"{script.caption}{src}\n\n{tags}"
 
