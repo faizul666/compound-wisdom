@@ -185,7 +185,7 @@ EDGE_TTS_VOICE = _env("EDGE_TTS_VOICE", "en-US-AndrewNeural")
 # with Edge TTS as the automatic fallback; unset = Edge TTS only.
 FISH_API_KEY = _env("FISH_API_KEY")
 FISH_VOICE_ID = _env("FISH_VOICE_ID")          # a voice-model id from fish.audio (optional)
-FISH_MODEL = _env("FISH_MODEL", "s2.1-pro")     # or s2.1-pro-free for the free tier
+FISH_MODEL = _env("FISH_MODEL", "s2.1-pro-free")  # free tier (S2.1 Pro, unlimited under fair use)
 REELS_DIR = DATA_DIR / "reels"
 MUSIC_DIR = BASE_DIR / "assets" / "music"
 # Reel slots per day, in TIMEZONE_TARGET (US Eastern). Reels are the discovery
