@@ -188,9 +188,9 @@ FISH_VOICE_ID = _env("FISH_VOICE_ID")          # a voice-model id from fish.audi
 FISH_MODEL = _env("FISH_MODEL", "s2.1-pro-free")  # free tier (S2.1 Pro, unlimited under fair use)
 REELS_DIR = DATA_DIR / "reels"
 MUSIC_DIR = BASE_DIR / "assets" / "music"
-# Reel slots per day, in TIMEZONE_TARGET (US Eastern). Reels are the discovery
-# engine, so we run two/day. Each slot is its own idempotency key.
-REEL_SLOTS = ((11, 0), (19, 0))
+# Reel slots per day, in TIMEZONE_TARGET (US Eastern), 12 hours apart. Each slot
+# is its own idempotency key.
+REEL_SLOTS = ((8, 0), (20, 0))
 REEL_MUSIC_VOLUME = float(_env("REEL_MUSIC_VOLUME", "0.12"))
 REEL_TARGET_SECONDS = float(_env("REEL_TARGET_SECONDS", "40"))
 
