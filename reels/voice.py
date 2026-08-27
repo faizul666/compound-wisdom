@@ -53,6 +53,17 @@ def _audio_duration(path: Path) -> float:
     return int(h) * 3600 + int(mn) * 60 + float(s)
 
 
+_MARKDOWN = re.compile(r"[*_`~#>|]+")
+
+
+def _clean_for_tts(text: str) -> str:
+    """Strip markup so TTS never reads symbols aloud (e.g. *take* -> take)."""
+    t = _MARKDOWN.sub("", text)
+    t = t.replace("—", ", ").replace("–", ", ")   # dashes -> a natural pause
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+
 def _approx_words(text: str, duration: float) -> list[Word]:
     """Distribute `duration` across the words of `text`, weighted by word length."""
     tokens = text.split()
@@ -142,6 +153,7 @@ def synthesize_beats(beats: list[str], out_path: Path, voice: str | None = None,
     """Synthesize beats with pauses. Fish Audio if configured, else/failover Edge."""
     voice = voice or config.EDGE_TTS_VOICE
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    beats = [_clean_for_tts(b) for b in beats]  # no markdown read aloud / in captions
 
     def edge_one(text, raw):
         words = asyncio.run(_edge_one(text, voice, rate, str(raw)))
