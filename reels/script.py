@@ -49,9 +49,8 @@ NON-NEGOTIABLE RULES:
    a number and year is a fact and is allowed; lifting an author's memorable line
    is not.)
 
-3. FIVE BEATS, ~25-30 seconds total, spoken plainly — plain words only, NO
-   markdown, NO asterisks or emphasis symbols, no emojis, no lists. Keep each
-   beat TIGHT — respect the word caps:
+3. FIVE BEATS, ~25-30 seconds total, spoken plainly (no emojis, no lists). Keep
+   each beat TIGHT — respect the word caps:
    - hook_claim (<=12 words): the concrete claim, no setup. Start on a number or
      hard word, never "So" or "The".
    - evidence (<=22 words): the real name + number + year (+ caveat).

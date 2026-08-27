@@ -42,9 +42,6 @@ jobs:
       FB_GRAPH_VERSION: ${{ vars.FB_GRAPH_VERSION || 'v25.0' }}
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       EDGE_TTS_VOICE: ${{ vars.EDGE_TTS_VOICE || 'en-US-AndrewNeural' }}
-      FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
-      FISH_VOICE_ID: ${{ vars.FISH_VOICE_ID }}
-      FISH_MODEL: ${{ vars.FISH_MODEL || 's2.1-pro-free' }}
       RESEARCH_USE_GROUNDING: ${{ vars.RESEARCH_USE_GROUNDING || '1' }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
