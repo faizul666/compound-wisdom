@@ -163,12 +163,13 @@ def _call_structured(prompt: str) -> ReelScript:
         max_output_tokens=2048, response_mime_type="application/json",
         response_schema=ReelScript,
     )
-    resp = None
+    from pydantic import ValidationError
+
+    last_err = "no attempt"
     for attempt in range(1, GENERATION_RETRIES + 1):
         try:
             resp = _client().models.generate_content(
                 model=config.MODEL_FLASH, contents=prompt, config=cfg)
-            break
         except Exception as e:
             if _is_transient(str(e)):
                 if attempt < GENERATION_RETRIES:
@@ -176,10 +177,19 @@ def _call_structured(prompt: str) -> ReelScript:
                     continue
                 raise TransientError(f"reel structured transient error: {e}") from e
             raise GenerationError(f"reel structured generation failed: {e}") from e
-    parsed = getattr(resp, "parsed", None)
-    if isinstance(parsed, ReelScript):
-        return parsed
-    text = (getattr(resp, "text", None) or "").strip()
-    if not text:
-        raise GenerationError("reel structured: empty response")
-    return ReelScript.model_validate_json(text)
+
+        # Parse INSIDE the loop: an empty/invalid response is retried, not fatal.
+        parsed = getattr(resp, "parsed", None)
+        if isinstance(parsed, ReelScript):
+            return parsed
+        text = (getattr(resp, "text", None) or "").strip()
+        if text:
+            try:
+                return ReelScript.model_validate_json(text)
+            except ValidationError as e:
+                last_err = f"validation: {e}"
+        else:
+            last_err = "empty response"
+        if attempt < GENERATION_RETRIES:
+            time.sleep(1)
+    raise GenerationError(f"reel structured produced no valid script after retries ({last_err})")

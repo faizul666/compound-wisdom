@@ -3,12 +3,19 @@ name: Compound Wisdom — reel
 on:
   schedule:
     # Two reels/day, 12 hours apart (8:00 AM & 8:00 PM ET). run_reel makes the
-    # oldest due-unposted slot, one per run; these 4 spread times cover both
-    # slots in EST and EDT.
-    - cron: "20 12 * * *"   # ~ 8:00 AM ET (EDT)
-    - cron: "20 13 * * *"   # ~ 8:00 AM ET (EST) / catch-up
-    - cron: "20 0 * * *"    # ~ 8:00 PM ET (EDT)
-    - cron: "20 1 * * *"    # ~ 8:00 PM ET (EST) / catch-up
+    # oldest due-unposted slot, one per run, and a slot stays "due" until it
+    # posts (same ET day) — so several catch-up times per slot mean GitHub can
+    # drop scheduled runs (it often does) and a reel still goes out.
+    # Morning slot (8 AM ET = 12:00 EDT / 13:00 EST UTC):
+    - cron: "20 12 * * *"
+    - cron: "20 13 * * *"
+    - cron: "20 15 * * *"
+    - cron: "20 17 * * *"
+    # Evening slot (8 PM ET = 00:00 EDT / 01:00 EST UTC next day):
+    - cron: "20 0 * * *"
+    - cron: "20 1 * * *"
+    - cron: "20 2 * * *"
+    - cron: "20 3 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
