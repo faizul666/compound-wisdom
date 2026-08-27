@@ -3,19 +3,18 @@ name: Compound Wisdom — reel
 on:
   schedule:
     # Two reels/day, 12 hours apart (8:00 AM & 8:00 PM ET). run_reel makes the
-    # oldest due-unposted slot, one per run, and a slot stays "due" until it
-    # posts (same ET day) — so several catch-up times per slot mean GitHub can
-    # drop scheduled runs (it often does) and a reel still goes out.
+    # oldest due-unposted slot, one per run; a slot stays "due" until it posts
+    # (same ET day). Crons are spaced ~2h apart (not clustered) so GitHub's
+    # delayed batch-releases don't pile them into the concurrency group and
+    # cancel each other — a few tries per slot survive GitHub's dropped runs.
     # Morning slot (8 AM ET = 12:00 EDT / 13:00 EST UTC):
-    - cron: "20 12 * * *"
-    - cron: "20 13 * * *"
-    - cron: "20 15 * * *"
-    - cron: "20 17 * * *"
+    - cron: "15 12 * * *"
+    - cron: "15 14 * * *"
+    - cron: "15 16 * * *"
     # Evening slot (8 PM ET = 00:00 EDT / 01:00 EST UTC next day):
-    - cron: "20 0 * * *"
-    - cron: "20 1 * * *"
-    - cron: "20 2 * * *"
-    - cron: "20 3 * * *"
+    - cron: "15 0 * * *"
+    - cron: "15 2 * * *"
+    - cron: "30 3 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -27,7 +26,10 @@ permissions:
   contents: write
 
 concurrency:
-  group: compound-wisdom-state
+  # Reels get their OWN group so a research run holding the shared group can't
+  # cancel a pending reel run. (DB commit races are resolved by the
+  # pull-rebase-push retry, so a separate group is safe.)
+  group: compound-wisdom-reel
   cancel-in-progress: false
 
 jobs:
