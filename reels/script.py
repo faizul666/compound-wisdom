@@ -81,8 +81,10 @@ def _system_instruction() -> str:
 def _call(prompt: str, use_grounding: bool) -> str:
     from google.genai import types
 
+    # 2.5-flash is a thinking model — reasoning eats the output budget, so a low
+    # cap truncates the JSON mid-output (the "unterminated string" failures).
     kwargs = dict(system_instruction=_system_instruction(), temperature=0.9,
-                  max_output_tokens=2048)
+                  max_output_tokens=config.MAX_OUTPUT_TOKENS)
     if use_grounding:
         kwargs["tools"] = [types.Tool(google_search=types.GoogleSearch())]
     else:
@@ -160,7 +162,7 @@ def _call_structured(prompt: str) -> ReelScript:
 
     cfg = types.GenerateContentConfig(
         system_instruction=_system_instruction(), temperature=0.9,
-        max_output_tokens=2048, response_mime_type="application/json",
+        max_output_tokens=config.MAX_OUTPUT_TOKENS, response_mime_type="application/json",
         response_schema=ReelScript,
     )
     from pydantic import ValidationError
