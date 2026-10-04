@@ -93,7 +93,7 @@ def _call(prompt: str, use_grounding: bool) -> str:
     for attempt in range(1, GENERATION_RETRIES + 1):
         try:
             resp = _client().models.generate_content(
-                model=config.MODEL_FLASH, contents=prompt,
+                model=config.GEMINI_SCRIPT_MODEL, contents=prompt,
                 config=types.GenerateContentConfig(**kwargs),
             )
             break
@@ -171,7 +171,7 @@ def _call_structured(prompt: str) -> ReelScript:
     for attempt in range(1, GENERATION_RETRIES + 1):
         try:
             resp = _client().models.generate_content(
-                model=config.MODEL_FLASH, contents=prompt, config=cfg)
+                model=config.GEMINI_SCRIPT_MODEL, contents=prompt, config=cfg)
         except Exception as e:
             if _is_transient(str(e)):
                 if attempt < GENERATION_RETRIES:

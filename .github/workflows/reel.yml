@@ -42,6 +42,9 @@ jobs:
       FB_GRAPH_VERSION: ${{ vars.FB_GRAPH_VERSION || 'v25.0' }}
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       EDGE_TTS_VOICE: ${{ vars.EDGE_TTS_VOICE || 'en-US-AndrewNeural' }}
+      GEMINI_TTS_MODEL: ${{ vars.GEMINI_TTS_MODEL || 'gemini-3.8-flash-tts' }}
+      GEMINI_TTS_VOICE: ${{ vars.GEMINI_TTS_VOICE || 'Charon' }}
+      GEMINI_SCRIPT_MODEL: ${{ vars.GEMINI_SCRIPT_MODEL || 'gemini-3.1-pro-preview' }}
       RESEARCH_USE_GROUNDING: ${{ vars.RESEARCH_USE_GROUNDING || '1' }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

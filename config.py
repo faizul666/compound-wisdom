@@ -181,6 +181,11 @@ BANNED_PHRASES: tuple[str, ...] = (
 # --------------------------------------------------------------------------
 PEXELS_API_KEY = _env("PEXELS_API_KEY")
 EDGE_TTS_VOICE = _env("EDGE_TTS_VOICE", "en-US-AndrewNeural")
+# Gemini native TTS is the primary reel voice (paid account); Edge is the fallback.
+GEMINI_TTS_MODEL = _env("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts")
+GEMINI_TTS_VOICE = _env("GEMINI_TTS_VOICE", "Charon")
+# Upper model for reel script generation (paid account).
+GEMINI_SCRIPT_MODEL = _env("GEMINI_SCRIPT_MODEL", "gemini-3.1-pro-preview")
 REELS_DIR = DATA_DIR / "reels"
 MUSIC_DIR = BASE_DIR / "assets" / "music"
 # Reel slots per day, in TIMEZONE_TARGET (US Eastern), 12 hours apart. Each slot
